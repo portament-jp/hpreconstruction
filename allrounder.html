@@ -253,7 +253,7 @@
         <div class="str-item rv">
           <div class="str-card">稼働後のPJ<br>内部フォロー</div>
           <ul class="str-pts">
-            <li>可能であればコンサルティングファーム出身のプロジェクト支援部隊がプロジェクトに事前参画(無料)し、稼働者のプロジェクト参画後のサポートをします。</li>
+            <li>可能であればコンサルティングファーム出身のプロジェクト支援部隊がプロジェクトに事前参画（無料）し、稼働者のプロジェクト参画後のサポートをします。</li>
             <li class="note">※一般に、稼働者にスキルがある前提で、稼働者がバリューを出せないケースの大半はコミュニケーションが原因であるため、上記フォローは高い効果がございます。</li>
           </ul>
         </div>
@@ -334,21 +334,21 @@
 </div>
 
 <script>
-  const hd = document.querySelector('header');
-  addEventListener('scroll', () => hd.classList.toggle('scrolled', scrollY > 40), { passive: true });
-  const io = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
-  }), { threshold: .14 });
-  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+  const hd = document.querySelector（'header'）;
+  addEventListener（'scroll', （） => hd.classList.toggle（'scrolled', scrollY > 40）, { passive: true }）;
+  const io = new IntersectionObserver（es => es.forEach（e => {
+    if （e.isIntersecting） { e.target.classList.add（'on'）; io.unobserve（e.target）; }
+  }）, { threshold: .14 }）;
+  document.querySelectorAll（'.rv'）.forEach（el => io.observe（el））;
 
-  const form = document.getElementById('contactForm');
-  if (form) form.addEventListener('submit', e => {
-    e.preventDefault();
-    if (!form.checkValidity()) { form.reportValidity(); return; }
+  const form = document.getElementById（'contactForm'）;
+  if （form） form.addEventListener（'submit', e => {
+    e.preventDefault（）;
+    if （!form.checkValidity（）） { form.reportValidity（）; return; }
     form.style.display = 'none';
-    const d = document.getElementById('formDone'); d.classList.add('show');
-    d.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
+    const d = document.getElementById（'formDone'）; d.classList.add（'show'）;
+    d.scrollIntoView（{ behavior: 'smooth', block: 'center' }）;
+  }）;
 </script>
 </body>
 </html>

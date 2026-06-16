@@ -540,79 +540,79 @@
 </div>
 
 <script>
-  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const REDUCED = matchMedia（'（prefers-reduced-motion: reduce）'）.matches;
 
   // ヘッダー: スクロールで磨りガラス化
-  const hd = document.querySelector('header');
-  addEventListener('scroll', () => hd.classList.toggle('scrolled', scrollY > 40), { passive: true });
+  const hd = document.querySelector（'header'）;
+  addEventListener（'scroll', （） => hd.classList.toggle（'scrolled', scrollY > 40）, { passive: true }）;
 
   /* ===== 全頁を貫く流線 ===== */
-  const svg = document.getElementById('flowSvg');
-  const path = document.getElementById('flowPath');
-  const flowStartG = document.getElementById('flowStartG');
-  const logoStage = document.querySelector('.logo-stage');
+  const svg = document.getElementById（'flowSvg'）;
+  const path = document.getElementById（'flowPath'）;
+  const flowStartG = document.getElementById（'flowStartG'）;
+  const logoStage = document.querySelector（'.logo-stage'）;
   let pathLen = 0;
 
-  function layoutCenter(el) {
+  function layoutCenter（el） {
     let x = 0, y = 0;
     const w = el.offsetWidth, h = el.offsetHeight;
-    while (el) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; }
+    while （el） { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; }
     return { x: x + w / 2, y: y + h / 2 };
   }
 
-  function buildPath() {
+  function buildPath（） {
     const W = innerWidth;
     const H = document.documentElement.scrollHeight;
-    svg.setAttribute('width', W);
-    svg.setAttribute('height', H);
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    const lc = layoutCenter(logoStage);
+    svg.setAttribute（'width', W）;
+    svg.setAttribute（'height', H）;
+    svg.setAttribute（'viewBox', `0 0 ${W} ${H}`）;
+    const lc = layoutCenter（logoStage）;
     const startX = lc.x;
     const startY = lc.y + logoStage.offsetHeight / 2 + 64;
-    flowStartG.setAttribute('transform', `translate(${startX} ${startY})`);
-    const amp = Math.min(W * .32, 440);
+    flowStartG.setAttribute（'transform', `translate（${startX} ${startY}）`）;
+    const amp = Math.min（W * .32, 440）;
     const cxL = W / 2 - amp, cxR = W / 2 + amp;
-    const seg = (H - startY - 120) / 4;
+    const seg = （H - startY - 120） / 4;
     let d = `M ${startX} ${startY}`;
     d += ` C ${startX} ${startY + seg * .55}, ${cxL} ${startY + seg * .45}, ${cxL} ${startY + seg}`;
     d += ` S ${cxR} ${startY + seg * 1.6}, ${cxR} ${startY + seg * 2}`;
     d += ` S ${cxL} ${startY + seg * 2.6}, ${cxL} ${startY + seg * 3}`;
     d += ` S ${W / 2} ${startY + seg * 3.7}, ${W / 2} ${startY + seg * 4}`;
-    path.setAttribute('d', d);
-    pathLen = path.getTotalLength();
+    path.setAttribute（'d', d）;
+    pathLen = path.getTotalLength（）;
     path.style.strokeDasharray = pathLen;
-    drawOnScroll();
+    drawOnScroll（）;
   }
-  function drawOnScroll() {
+  function drawOnScroll（） {
     const h = document.documentElement;
-    const p = Math.min(1, h.scrollTop / (h.scrollHeight - h.clientHeight) * 1.12);
-    path.style.strokeDashoffset = pathLen * (1 - p);
+    const p = Math.min（1, h.scrollTop / （h.scrollHeight - h.clientHeight） * 1.12）;
+    path.style.strokeDashoffset = pathLen * （1 - p）;
   }
-  if (!REDUCED) {
-    addEventListener('scroll', drawOnScroll, { passive: true });
-    addEventListener('resize', buildPath);
-    addEventListener('load', buildPath);
-    buildPath();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildPath);
-    document.querySelectorAll('img').forEach(img => {
-      if (!img.complete) img.addEventListener('load', buildPath, { once: true });
-    });
-    if (window.ResizeObserver) new ResizeObserver(() => buildPath()).observe(document.body);
-    setTimeout(buildPath, 2600);
+  if （!REDUCED） {
+    addEventListener（'scroll', drawOnScroll, { passive: true }）;
+    addEventListener（'resize', buildPath）;
+    addEventListener（'load', buildPath）;
+    buildPath（）;
+    if （document.fonts && document.fonts.ready） document.fonts.ready.then（buildPath）;
+    document.querySelectorAll（'img'）.forEach（img => {
+      if （!img.complete） img.addEventListener（'load', buildPath, { once: true }）;
+    }）;
+    if （window.ResizeObserver） new ResizeObserver（（） => buildPath（））.observe（document.body）;
+    setTimeout（buildPath, 2600）;
   } else {
     svg.style.display = 'none';
   }
 
   /* ===== 点: 少なく・小さく・ロゴ付近には置かない（c2） ===== */
-  const cv = document.getElementById('pcanvas');
-  if (!REDUCED) {
-    const ctx = cv.getContext('2d');
+  const cv = document.getElementById（'pcanvas'）;
+  if （!REDUCED） {
+    const ctx = cv.getContext（'2d'）;
     const COLORS = ['#1840cf', '#0daecc', '#19b7aa', '#e7bb29', '#f04f32'];
     let parts = [], mx = -9999, my = -9999;
-    function inLogoZone(x, y) {
+    function inLogoZone（x, y） {
       const cx = cv.width / 2, cy = cv.height * .42;
-      const rx = Math.min(cv.width * .38, 600), ry = Math.min(cv.height * .3, 320);
-      const dx = (x - cx) / rx, dy = (y - cy) / ry;
+      const rx = Math.min（cv.width * .38, 600）, ry = Math.min（cv.height * .3, 320）;
+      const dx = （x - cx） / rx, dy = （y - cy） / ry;
       return dx * dx + dy * dy < 1;
     }
     function spawn(i) {
@@ -620,43 +620,43 @@
       do { x = Math.random() * cv.width; y = Math.random() * cv.height; tries++; } while (tries < 24 && inLogoZone(x, y));
       return { x, y, vx: (Math.random() - .5) * .22, vy: (Math.random() - .5) * .22, r: 2.5 + Math.random() * 3.5, c: COLORS[i % COLORS.length], o: .22 + Math.random() * .23, par: 0.08 + Math.random() * 0.32 };
     }
-    function initParticles() { cv.width = innerWidth; cv.height = innerHeight; const n = Math.min(20, Math.floor(innerWidth / 95)); parts = Array.from({ length: n }, (_, i) => spawn(i)); }
-    addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
-    addEventListener('resize', initParticles);
-    initParticles();
-    (function loop() {
+    function initParticles() { cv.width = innerWidth; cv.height = innerHeight; const n = Math.min(20, Math.floor(innerWidth / 95)); parts = Array.from({ length: n }, (_, i) => spawn（i））; }
+    addEventListener（'pointermove', e => { mx = e.clientX; my = e.clientY; }, { passive: true }）;
+    addEventListener（'resize', initParticles）;
+    initParticles（）;
+    （function loop（） {
       const H = cv.height; const sY = window.scrollY;
-      ctx.clearRect(0, 0, cv.width, H);
-      for (const p of parts) {
-        let drawY = ((p.y - sY * p.par) % H + H) % H;
+      ctx.clearRect（0, 0, cv.width, H）;
+      for （const p of parts） {
+        let drawY = （（p.y - sY * p.par） % H + H） % H;
         const dx = p.x - mx, dy = drawY - my, d2 = dx * dx + dy * dy;
-        if (d2 < 16000) { const f = 12 / Math.sqrt(d2 + 60); p.vx += dx * f * .003; p.vy += dy * f * .003; }
+        if （d2 < 16000) { const f = 12 / Math.sqrt(d2 + 60); p.vx += dx * f * .003; p.vy += dy * f * .003; }
         if (inLogoZone(p.x, drawY)) { const cx = cv.width / 2, cy = cv.height * .42; const ox = p.x - cx, oy = drawY - cy, on = Math.hypot(ox, oy) + 1; p.vx += (ox / on) * .012; p.vy += (oy / on) * .012; }
         p.vx *= .985; p.vy *= .985; p.x += p.vx; p.y += p.vy;
-        if (p.x < -16) p.x = cv.width + 16; if (p.x > cv.width + 16) p.x = -16;
-        if (p.y < -16) p.y += H; if (p.y > H + 16) p.y -= H;
+        if (p.x < -16) p.x = cv.width + 16; if (p.x > cv.width + 16） p.x = -16;
+        if （p.y < -16) p.y += H; if (p.y > H + 16） p.y -= H;
         ctx.globalAlpha = p.o; ctx.fillStyle = p.c;
-        ctx.beginPath(); ctx.arc(p.x, drawY, p.r, 0, 7); ctx.fill();
+        ctx.beginPath（）; ctx.arc（p.x, drawY, p.r, 0, 7）; ctx.fill（）;
       }
-      ctx.globalAlpha = 1; requestAnimationFrame(loop);
-    })();
+      ctx.globalAlpha = 1; requestAnimationFrame（loop）;
+    }）（）;
   }
 
   /* ===== スクロールリビール ===== */
-  const io = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
-  }), { threshold: .16 });
-  document.querySelectorAll('.rv, .official-flow').forEach(el => io.observe(el));
+  const io = new IntersectionObserver（es => es.forEach（e => {
+    if （e.isIntersecting） { e.target.classList.add（'on'）; io.unobserve（e.target）; }
+  }）, { threshold: .16 }）;
+  document.querySelectorAll（'.rv, .official-flow'）.forEach（el => io.observe（el））;
 
   /* ===== お問い合わせフォーム（フロントのみ・送信後メッセージ） ===== */
-  const form = document.getElementById('contactForm');
-  if (form) form.addEventListener('submit', e => {
-    e.preventDefault();
-    if (!form.checkValidity()) { form.reportValidity(); return; }
+  const form = document.getElementById（'contactForm'）;
+  if （form） form.addEventListener（'submit', e => {
+    e.preventDefault（）;
+    if （!form.checkValidity（）） { form.reportValidity（）; return; }
     form.style.display = 'none';
-    document.getElementById('formDone').classList.add('show');
-    document.getElementById('formDone').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
+    document.getElementById（'formDone'）.classList.add（'show'）;
+    document.getElementById（'formDone'）.scrollIntoView（{ behavior: 'smooth', block: 'center' }）;
+  }）;
 </script>
 </body>
 </html>
