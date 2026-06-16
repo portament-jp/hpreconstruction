@@ -125,7 +125,8 @@
   .step-card .std { margin-top: 8px; font-family: var(--font-body); font-size: 12.5px; line-height: 1.85; color: var(--gray); }
 
   /* ---- とその強み（左ラベル＋右箇条書きの横並び表・スクショ準拠／色味はc2トーン） ---- */
-  .wstr { margin-top: clamp(40px,6vh,60px); display: grid; gap: 16px; }
+  .wstr { margin-top: clamp(40px,6vh,60px); display: grid; gap: 16px; grid-auto-rows: 1fr; }
+  .wstr-row .wb .vnote { margin-top: 9px; padding-left: 18px; font-family: var(--font-body); font-size: 12.5px; line-height: 1.8; color: var(--gray); }
   .wstr-row { display: grid; grid-template-columns: minmax(120px,.2fr) 1fr; background: #eef2f8; border-radius: 12px; overflow: hidden; }
   .wstr-row .wl { background: #dde5f1; padding: clamp(18px,2.4vh,24px) clamp(14px,1.6vw,20px); font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; text-align: center; }
   .wstr-row .wb { padding: clamp(16px,2.2vh,22px) clamp(18px,2.4vw,30px); }
@@ -227,15 +228,15 @@
   <!-- サービス概要 -->
   <section>
     <div class="inner">
-      <h2 class="sec-h rv">WAVELOPMENTの仕組みと強み</h2>
+      <h2 class="sec-h rv">WAVELOPMENTとは？</h2>
       <p class="sec-lede rv" style="max-width:none;">WAVELOPMENTは、弊社開発部隊が格安・迅速・高品質に請負開発をリモートで実施するサービスです。<br>弊社プロダクトの構築で活躍した人員をアサインするため、高い品質が保証でき、一定の品質を保証します。</p>
       <div class="wstr">
         <div class="wstr-row rv">
           <div class="wl">格安</div>
           <div class="wb"><ul>
             <li>弊社はプロダクトを自動開発する独自の仕組みを持っており、通常受託開発の1/3〜1/2単価で構築が可能です。</li>
-            <li>仕組みの紹介動画は<a href="https://www.youtube.com/watch?v=3lkAF08xLpU" target="_blank" rel="noopener" style="color:var(--brand);font-weight:700;">こちら</a></li>
-          </ul></div>
+          </ul>
+          <p class="vnote">※仕組みの紹介動画は<a href="https://www.youtube.com/watch?v=3lkAF08xLpU" target="_blank" rel="noopener" style="color:var(--brand);font-weight:700;">こちら</a></p></div>
         </div>
         <div class="wstr-row rv" style="--d:.06s;">
           <div class="wl">迅速・高品質</div>
