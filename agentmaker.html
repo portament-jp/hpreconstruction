@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentmaker（新規事業・サービスの共創） — 株式会社PORTAMENT</title>
+<meta name="description" content="既存のサービス・プロダクトに弊社が無償でAI・自動化機能を付加し、オプション課金のレベニューシェアで共創するサービス。ノーリスクで追加売上を狙えます。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* ============ サービス詳細ページ（元 test-site 構成に準拠） ============ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink: #18171a; --gray: #61687a; --line: rgba(16,18,22,.08); --paper: #ffffff;
+    --red: #f04f32; --amber: #e7bb29; --lime: #c6e44d; --teal: #19b7aa; --cyan: #0daecc; --blue: #1840cf;
+    --ease: cubic-bezier(.23, 1, .32, 1);
+    --font-body: 'IBM Plex Sans JP', sans-serif;
+    --sp-3: clamp(84px, 12vh, 140px);
+    /* ブランド色（Agentmaker = 水色・シアン系） */
+    --brand: #2aa9e0; --brand-deep: #1f8fc4;
+    --brand-hero: linear-gradient(105deg, #1273c0 0%, #3f9fdf 52%, #cdeafb 100%);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Zen Kaku Gothic New', sans-serif; color: var(--ink);
+    background: #eceef1; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- ヘッダー（浮遊ピル・サイト共通） ---- */
+  header {
+    position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 50;
+    display: flex; align-items: center; gap: clamp(14px, 3vw, 34px);
+    padding: 10px 14px 10px 22px; border-radius: 999px;
+    background: rgba(247,248,249,.78); backdrop-filter: blur(16px) saturate(1.3);
+    border: 1px solid rgba(20,22,26,.08); box-shadow: 0 10px 36px rgba(20,22,26,.10);
+    width: max-content; max-width: calc(100vw - 32px); transition: box-shadow .4s;
+  }
+  header.scrolled { box-shadow: 0 14px 44px rgba(20,22,26,.14); }
+  .brand img { height: 40px; display: block; }
+  nav { display: flex; align-items: center; gap: clamp(12px, 2vw, 26px); }
+  nav a {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+    letter-spacing: .03em; color: var(--ink); text-decoration: none; position: relative;
+  }
+  nav a:not(.cta)::after {
+    content: ''; position: absolute; left: 50%; bottom: -7px; width: 4px; height: 4px; border-radius: 50%;
+    transform: translateX(-50%) scale(0); transition: transform .3s var(--ease);
+  }
+  nav a:nth-child(1)::after { background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+  nav a:nth-child(2)::after { background: linear-gradient(90deg, var(--teal), var(--lime)); }
+  nav a:nth-child(3)::after { background: linear-gradient(90deg, var(--red), var(--amber)); }
+  nav a:not(.cta):hover::after { transform: translateX(-50%) scale(1); }
+  nav a.cta {
+    font-weight: 700; font-size: 13px; color: #fff; padding: 9px 20px; border-radius: 999px;
+    background: var(--ink); overflow: hidden; isolation: isolate; transition: transform .25s, box-shadow .25s;
+  }
+  nav a.cta:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(20,22,26,.3); }
+  nav a.cta span { position: relative; z-index: 1; }
+  nav a.cta::before {
+    content: ''; position: absolute; inset: 0; z-index: 0;
+    background: linear-gradient(120deg, var(--blue), var(--cyan));
+    transform: translateY(101%); transition: transform .45s var(--ease);
+  }
+  nav a.cta:hover::before { transform: translateY(0); }
+  @media (max-width: 720px) { nav a:not(.cta) { display: none; } }
+
+  /* ---- 背景 ---- */
+  #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: #f4f5f7; }
+  .wrap { position: relative; z-index: 2; }
+
+  /* ---- 共通セクション ---- */
+  section { padding: var(--sp-3) clamp(20px, 5vw, 64px); position: relative; }
+  .inner { max-width: 1100px; margin: 0 auto; }
+  .rv { opacity: 0; transform: translateY(28px); transition: opacity .9s ease var(--d, 0s), transform .9s var(--ease) var(--d, 0s); }
+  .rv.on { opacity: 1; transform: none; }
+  .sec-h { font-size: clamp(24px, 3.6vw, 38px); font-weight: 900; letter-spacing: .02em; font-feature-settings: "palt"; }
+  .sec-lede { margin-top: 16px; color: var(--gray); font-size: 15px; font-family: var(--font-body); line-height: 2; max-width: 60em; word-break: auto-phrase; line-break: strict; }
+
+  /* ---- ブランド色ヒーロー ---- */
+  .svc-hero {
+    background: var(--brand-hero);
+    padding: clamp(116px,15vh,168px) clamp(20px,5vw,64px) clamp(64px,10vh,110px);
+    position: relative; overflow: hidden;
+  }
+  .svc-hero .inner { max-width: 1100px; display: grid; grid-template-columns: 1.25fr .75fr; align-items: center; gap: clamp(24px,4vw,56px); }
+  .hero-label { font-family: var(--font-body); font-size: clamp(13px,1.5vw,16px); letter-spacing: .12em; color: #fff; opacity: .92; }
+  .hero-name { margin-top: clamp(10px,1.6vh,18px); font-family: 'Inter', sans-serif; font-weight: 400; font-size: clamp(40px,6.4vw,82px); line-height: 1.04; color: #fff; letter-spacing: .005em; }
+  .hero-rule { margin-top: clamp(18px,2.4vh,26px); width: min(420px,82%); height: 1px; background: #fff; opacity: .55; }
+  .hero-icon { justify-self: center; }
+  .hero-icon img { display: block; width: auto; max-height: clamp(190px,27vw,330px); max-width: 100%; filter: drop-shadow(0 16px 40px rgba(16,24,48,.22)); }
+  @media (max-width: 760px) {
+    .svc-hero .inner { grid-template-columns: 1fr; text-align: center; gap: 26px; }
+    .hero-rule { margin-left: auto; margin-right: auto; }
+    .hero-icon { order: -1; }
+    .hero-icon img { margin: 0 auto; }
+  }
+
+  /* ---- 図・フロー画像 ---- */
+  .diagram { margin: clamp(32px,5.5vh,52px) auto 0; width: 100%; max-width: 720px; border: 1px solid var(--line); border-radius: 14px; background: #fff; padding: clamp(16px,2.4vw,28px); }
+  .diagram img { display: block; width: 100%; height: auto; }
+  .diagram.ph { border: 1.5px dashed rgba(16,18,22,.22); background: #fbfbfc; display: flex; align-items: center; justify-content: center; min-height: 170px; text-align: center; }
+  .diagram.ph .ph-note { color: #9aa0ab; font-family: var(--font-body); font-size: 13px; line-height: 1.9; max-width: 42em; }
+
+  /* ---- メリット ---- */
+  .merit-grid { margin-top: clamp(40px,6vh,60px); display: grid; grid-template-columns: 1fr 1fr; gap: clamp(34px,5vh,52px) clamp(40px,5vw,72px); }
+  .merit-item { border-left: 2px solid var(--brand); padding-left: clamp(18px,2vw,26px); }
+  .merit-head { display: flex; align-items: baseline; gap: 14px; }
+  .merit-num { font-family:'Inter',sans-serif; font-weight:700; font-size: clamp(16px,1.8vw,19px); color: var(--brand); }
+  .merit-title { font-size: clamp(16px,1.9vw,20px); font-weight:700; font-feature-settings:"palt"; line-height:1.5; }
+  .merit-pts { margin-top: 15px; list-style:none; display:grid; gap:13px; }
+  .merit-pts li { position:relative; padding-left:16px; font-family:var(--font-body); font-size:13.5px; line-height:1.9; color:var(--gray); }
+  .merit-pts li::before { content:''; position:absolute; left:2px; top:.72em; width:5px; height:5px; border-radius:50%; background:var(--brand); }
+  @media (max-width:760px){ .merit-grid { grid-template-columns: 1fr; } }
+
+  /* ---- 共創事例（図中心） ---- */
+  .amcase { margin-top: clamp(44px,7vh,72px); }
+  .amcase:first-of-type { margin-top: clamp(36px,5vh,56px); }
+  .amcase-head { display:flex; align-items:baseline; gap:14px; border-left:2px solid var(--brand); padding-left: clamp(16px,2vw,24px); }
+  .amcase-num { font-family:'Inter',sans-serif; font-weight:700; font-size: clamp(18px,2.2vw,24px); color: var(--brand); }
+  .amcase-title { font-size: clamp(17px,2.2vw,23px); font-weight:700; font-feature-settings:"palt"; line-height:1.4; }
+  .amcase-sub { margin-top:10px; padding-left: calc(clamp(16px,2vw,24px) + 2px); font-family:var(--font-body); font-size:13.5px; line-height:1.9; color:var(--gray); }
+
+  /* ---- お問い合わせフォーム ---- */
+  .contact-grid { margin-top: clamp(40px,7vh,64px); max-width: 720px; }
+  .field { margin-bottom: clamp(24px,4vh,34px); }
+  .field label { display: block; font-family: var(--font-body); font-size: 12.5px; letter-spacing:.05em; color: #8a91a0; margin-bottom: 10px; }
+  .field input, .field textarea { width: 100%; font-family: var(--font-body); font-size: 15px; color: var(--ink); background: transparent; border: none; border-bottom: 1px solid rgba(16,18,22,.22); padding: 8px 2px; outline: none; transition: border-color .3s; }
+  .field textarea { resize: vertical; min-height: 120px; line-height: 1.8; }
+  .field input:focus, .field textarea:focus { border-color: var(--brand); }
+  .submit { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; color: #fff; background: var(--ink); border: none; cursor: pointer; padding: 15px 40px; border-radius: 999px; letter-spacing:.04em; position: relative; overflow: hidden; isolation: isolate; transition: transform .25s, box-shadow .25s; }
+  .submit:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(20,22,26,.28); }
+  .submit span { position: relative; z-index: 1; }
+  .submit::before { content:''; position:absolute; inset:0; z-index:0; background: linear-gradient(120deg,var(--brand),var(--brand-deep)); transform: translateY(101%); transition: transform .45s var(--ease); }
+  .submit:hover::before { transform: translateY(0); }
+  .form-done { display: none; font-size: clamp(16px,2.2vw,20px); line-height: 2; font-feature-settings:"palt"; }
+  .form-done.show { display: block; }
+  .mail-note { margin-top: clamp(28px,4vh,40px); font-family: var(--font-body); font-size: 13px; color: var(--gray); }
+  .mail-note a { color: var(--brand-deep); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+
+  /* ---- フッター ---- */
+  footer.site { position: relative; z-index: 2; border-top: 1px solid var(--line); padding: clamp(48px,7vh,80px) clamp(20px,5vw,64px) clamp(36px,5vh,56px); background:#f4f5f7; }
+  .foot-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; align-items: flex-start; }
+  .foot-iso { font-family: var(--font-body); font-size: 12.5px; line-height: 2; color: var(--gray); max-width: 32em; }
+  .iso-logo { height: 56px; width: auto; display: block; margin-bottom: 14px; }
+  .foot-nav { display: flex; gap: clamp(16px,2.4vw,30px); flex-wrap: wrap; }
+  .foot-nav a { font-family:'Inter',sans-serif; font-size: 13px; font-weight: 500; letter-spacing:.03em; color: var(--ink); text-decoration: none; transition: color .3s; }
+  .foot-nav a:hover { color: var(--gray); }
+  .foot-copy { width: 100%; margin-top: clamp(28px,4vh,40px); padding-top: 20px; border-top: 1px solid var(--line); font-family:'Inter',sans-serif; font-size: 11.5px; letter-spacing:.06em; color: #9aa0ab; }
+
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<div id="bg" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header>
+    <a class="brand" href="index.html"><img src="assets/logo-main.png" alt="PORTAMENT"></a>
+    <nav>
+      <a href="index.html#business">Business</a><a href="index.html#services">Service</a><a href="index.html#company">Company</a>
+      <a class="cta" href="index.html#contact"><span>Contact</span></a>
+    </nav>
+  </header>
+
+  <!-- ブランド色ヒーロー -->
+  <section class="svc-hero">
+    <div class="inner">
+      <div class="hero-text">
+        <p class="hero-label rv">新規事業・サービスの共創</p>
+        <h1 class="hero-name rv" style="--d:.08s;">Agentmaker</h1>
+        <div class="hero-rule rv" style="--d:.16s;"></div>
+      </div>
+      <div class="hero-icon rv" style="--d:.12s;"><img src="assets/icon-agentmaker.png" alt="Agentmaker"></div>
+    </div>
+  </section>
+
+  <!-- サービス概要 -->
+  <section>
+    <div class="inner">
+      <h2 class="sec-h rv">サービス概要</h2>
+      <p class="sec-lede rv">ノーリスクで追加売上（しかもほぼ利益率100%）を得ることが可能です。<br>基本的に構築費は無償、ユーザーにオプション課金として契約いただき、その売上の一部をシェアするレベニューシェアの形をとらせていただいておりますが、別途ご相談も可能です。</p>
+      <div class="diagram rv" style="--d:.1s;"><img src="assets/agentmaker%20over%20view.png" alt="Agentmaker のサービス概要図：ユーザーの指示を読み取り自動操作。Agentmakerはユーザーから見えず、御社プロダクト上で業務を自動実行するAIエージェント機能が利用可能に"></div>
+    </div>
+  </section>
+
+  <!-- Agentmakerのメリット -->
+  <section>
+    <div class="inner">
+      <h2 class="sec-h rv">Agentmakerのメリット</h2>
+      <div class="merit-grid">
+        <div class="merit-item rv">
+          <div class="merit-head"><span class="merit-num">01</span><span class="merit-title">構築費不要</span></div>
+          <ul class="merit-pts">
+            <li>プロダクトの構築費は弊社にて負担します。(構築・販売規模に応じてご相談させていただく場合もございます)</li>
+            <li>また、構築にあたり、構想策定や要件定義は、弊社代表をはじめITコンサル経験豊富なメンバーが無償で全て引き取りあるいは伴走します。</li>
+          </ul>
+        </div>
+        <div class="merit-item rv" style="--d:.06s;">
+          <div class="merit-head"><span class="merit-num">02</span><span class="merit-title">通常の数分の1の期間で構築</span></div>
+          <ul class="merit-pts">
+            <li>基本的には、弊社製AI・自動化ツールOpsGuide(オプスガイド)のコーディング(カスタマイズではありません)を利用してプロダクトを構築します。</li>
+            <li>そのため、通常のプロダクト構築よりも遥かに早く構築でき、通常の数分の1の期間で構築可能です。</li>
+          </ul>
+        </div>
+        <div class="merit-item rv" style="--d:.12s;">
+          <div class="merit-head"><span class="merit-num">03</span><span class="merit-title">保守/追加開発が無償かつ尽力される保証</span></div>
+          <ul class="merit-pts">
+            <li>保守/追加開発は原則無償です。</li>
+            <li>さらに、Agentmakerの座組では、弊社が真剣に保守・追加開発に取り組まなければ、弊社が赤字になる仕組みになっています。そのため、一般的な受託開発と異なり、開発側である弊社が全力で開発に取り組むことが保証されています</li>
+          </ul>
+        </div>
+        <div class="merit-item rv" style="--d:.18s;">
+          <div class="merit-head"><span class="merit-num">04</span><span class="merit-title">新規事業としてAI・自動化領域に踏み込める</span></div>
+          <ul class="merit-pts">
+            <li>プロダクトがAI・自動化要素を含むサービスであれば、例えば"XXAIエージェント"といった形で売り出すことができるため、IR等においてAI領域に踏み込むアピール材料として活用が可能です。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 共創事例 -->
+  <section>
+    <div class="inner">
+      <h2 class="sec-h rv">共創事例</h2>
+
+      <div class="amcase rv">
+        <div class="amcase-head"><span class="amcase-num">01</span><span class="amcase-title">チャットで登録</span></div>
+        <p class="amcase-sub">チャットで入力した内容をもとにデータ登録</p>
+        <div class="diagram rv" style="--d:.06s;"><img src="assets/Agentmakercase1.png" alt="共創事例①チャットで登録：LINE・Wantedlyからの顧客情報・契約報告を営業管理系プロダクトへ、chatworkの現場報告を建設管理系プロダクトへ自動登録"></div>
+      </div>
+
+      <div class="amcase rv">
+        <div class="amcase-head"><span class="amcase-num">02</span><span class="amcase-title">書類データ自動登録</span></div>
+        <p class="amcase-sub">チャットやメールで受領した書類を自動で読み取りデータ登録</p>
+        <div class="diagram rv" style="--d:.06s;"><img src="assets/Agentmakercase2.png" alt="共創事例②書類データ自動登録：Slack・Googleドライブ上の登記簿謄本を不動産系プロダクトへ、Gmail・Outlookの請求書を会計系プロダクトへ内容とファイルを自動登録"></div>
+      </div>
+
+      <div class="amcase rv">
+        <div class="amcase-head"><span class="amcase-num">03</span><span class="amcase-title">自動データ入出力</span></div>
+        <p class="amcase-sub">システムから定期的に情報を自動入出力</p>
+        <div class="diagram rv" style="--d:.06s;"><img src="assets/Agentmakercase3.png" alt="共創事例③自動データ入出力：スプレッドシート・Excelの募集要項を採用・人材系プロダクトへ自動入力、マーケティング系プロダクトのデータをGoogleドライブ等へ毎日自動出力"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ご利用までの流れ -->
+  <section>
+    <div class="inner">
+      <h2 class="sec-h rv">ご利用までの流れ</h2>
+      <p class="sec-lede rv">最短2週間でリリース可能です。</p>
+      <div class="diagram rv" style="max-width:1040px;"><img src="assets/agentmakerflow.png" alt="Agentmaker ご利用までの流れ：エージェント利用業務のすり合わせ → ご契約・エージェント構築 → ユーザーへの営業 → ユーザー利用開始"></div>
+    </div>
+  </section>
+
+  <!-- お問い合わせ -->
+  <section id="contact">
+    <div class="inner">
+      <h2 class="sec-h rv">お問い合わせ</h2>
+      <p class="sec-lede rv">サービスに関するご質問・ご相談はお気軽にどうぞ。</p>
+      <form class="contact-grid rv" id="contactForm" novalidate>
+        <div class="field"><label for="cf-name">お名前</label><input type="text" id="cf-name" name="name" autocomplete="name" required></div>
+        <div class="field"><label for="cf-email">メールアドレス</label><input type="email" id="cf-email" name="email" autocomplete="email" required></div>
+        <div class="field"><label for="cf-company">会社名</label><input type="text" id="cf-company" name="company" autocomplete="organization"></div>
+        <div class="field"><label for="cf-message">お問い合わせ内容</label><textarea id="cf-message" name="message" required></textarea></div>
+        <button type="submit" class="submit"><span>送信する</span></button>
+      </form>
+      <p class="form-done" id="formDone">お問い合わせありがとうございます。<br>担当者より2営業日以内にご連絡致します。</p>
+      <p class="mail-note rv">メールでのお問い合わせ：<a href="mailto:sales@portament.jp">sales@portament.jp</a></p>
+    </div>
+  </section>
+
+  <!-- フッター -->
+  <footer class="site">
+    <div class="foot-inner">
+      <div class="foot-iso"><img class="iso-logo" src="assets/logo-isms.png" alt="ISMS-AC / DQS ISO/IEC 27001 認証">当社は、ISO/IEC 27001（ISMS）認証をDQSより取得しています。</div>
+      <nav class="foot-nav">
+        <a href="index.html#business">Business</a>
+        <a href="index.html#services">Service</a>
+        <a href="index.html#company">Company</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="privacy-policy.html">プライバシーポリシー</a>
+        <a href="security-policy.html">情報セキュリティ方針</a>
+      </nav>
+    </div>
+    <div class="foot-copy">© 2026 PORTAMENT, inc. All Rights Reserved.</div>
+  </footer>
+</div>
+
+<script>
+  const hd = document.querySelector('header');
+  addEventListener('scroll', () => hd.classList.toggle('scrolled', scrollY > 40), { passive: true });
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
+  }), { threshold: .14 });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  const form = document.getElementById('contactForm');
+  if (form) form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    form.style.display = 'none';
+    const d = document.getElementById('formDone'); d.classList.add('show');
+    d.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+</script>
+</body>
+</html>

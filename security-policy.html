@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>情報セキュリティ方針 — 株式会社PORTAMENT</title>
+<meta name="description" content="株式会社PORTAMENTの情報セキュリティ方針。情報資産を脅威から守り、お客様ならびに社会の信頼に応えるための全社的な取り組み方針です。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink: #18171a; --gray: #61687a; --line: rgba(16,18,22,.08); --paper: #ffffff;
+    --red: #f04f32; --amber: #e7bb29; --lime: #c6e44d; --teal: #19b7aa; --cyan: #0daecc; --blue: #1840cf;
+    --ease: cubic-bezier(.23, 1, .32, 1);
+    --font-body: 'IBM Plex Sans JP', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Zen Kaku Gothic New', sans-serif; color: var(--ink); background: #f4f5f7; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+  /* ---- ヘッダー（浮遊ピル・サイト共通） ---- */
+  header {
+    position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 50;
+    display: flex; align-items: center; gap: clamp(14px, 3vw, 34px);
+    padding: 10px 14px 10px 22px; border-radius: 999px;
+    background: rgba(247,248,249,.78); backdrop-filter: blur(16px) saturate(1.3);
+    border: 1px solid rgba(20,22,26,.08); box-shadow: 0 10px 36px rgba(20,22,26,.10);
+    width: max-content; max-width: calc(100vw - 32px); transition: box-shadow .4s;
+  }
+  header.scrolled { box-shadow: 0 14px 44px rgba(20,22,26,.14); }
+  .brand img { height: 40px; display: block; }
+  nav { display: flex; align-items: center; gap: clamp(12px, 2vw, 26px); }
+  nav a { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: .03em; color: var(--ink); text-decoration: none; position: relative; }
+  nav a:not(.cta)::after { content: ''; position: absolute; left: 50%; bottom: -7px; width: 4px; height: 4px; border-radius: 50%; transform: translateX(-50%) scale(0); transition: transform .3s var(--ease); }
+  nav a:nth-child(1)::after { background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+  nav a:nth-child(2)::after { background: linear-gradient(90deg, var(--teal), var(--lime)); }
+  nav a:nth-child(3)::after { background: linear-gradient(90deg, var(--red), var(--amber)); }
+  nav a:not(.cta):hover::after { transform: translateX(-50%) scale(1); }
+  nav a.cta { font-weight: 700; font-size: 13px; color: #fff; padding: 9px 20px; border-radius: 999px; background: var(--ink); overflow: hidden; isolation: isolate; transition: transform .25s, box-shadow .25s; }
+  nav a.cta:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(20,22,26,.3); }
+  nav a.cta span { position: relative; z-index: 1; }
+  nav a.cta::before { content: ''; position: absolute; inset: 0; z-index: 0; background: linear-gradient(120deg, var(--blue), var(--cyan)); transform: translateY(101%); transition: transform .45s var(--ease); }
+  nav a.cta:hover::before { transform: translateY(0); }
+  @media (max-width: 720px) { nav a:not(.cta) { display: none; } }
+
+  /* ---- 法務ページ ---- */
+  .legal-hero { padding: clamp(120px,16vh,180px) clamp(20px,5vw,64px) clamp(36px,5vh,56px); border-bottom: 1px solid var(--line); background: #fff; }
+  .legal-hero .inner { max-width: 880px; margin: 0 auto; }
+  .legal-hero .eyebrow { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .14em; color: var(--cyan); text-transform: uppercase; }
+  .legal-hero h1 { margin-top: 12px; font-size: clamp(28px,4.6vw,46px); font-weight: 900; letter-spacing: .02em; font-feature-settings: "palt"; }
+  .legal-hero .upd { margin-top: 16px; font-family: var(--font-body); font-size: 13px; color: var(--gray); }
+
+  .legal { padding: clamp(44px,6vh,72px) clamp(20px,5vw,64px) clamp(64px,9vh,110px); }
+  .legal .inner { max-width: 880px; margin: 0 auto; }
+  .legal .lead { font-family: var(--font-body); font-size: 15px; line-height: 2; color: var(--ink); }
+  .legal .lead + .lead { margin-top: 18px; }
+  .legal .item { margin-top: clamp(26px,3.6vh,38px); padding-left: clamp(18px,2vw,24px); border-left: 2px solid var(--cyan); }
+  .legal .item h2 { font-size: clamp(17px,2.1vw,21px); font-weight: 700; font-feature-settings: "palt"; }
+  .legal .item p { margin-top: 10px; font-family: var(--font-body); font-size: 14px; line-height: 1.95; color: var(--gray); }
+  .legal .sign { margin-top: clamp(40px,6vh,60px); padding-top: clamp(24px,3.4vh,32px); border-top: 1px solid var(--line); font-family: var(--font-body); font-size: 14px; line-height: 2; color: var(--ink); }
+  .legal .note { margin-top: clamp(28px,4vh,40px); padding: clamp(18px,2.6vh,24px) clamp(18px,2.4vw,26px); background: #eef2f8; border-radius: 14px; font-family: var(--font-body); font-size: 13px; line-height: 1.9; color: var(--gray); }
+
+  /* ---- フッター（サイト共通） ---- */
+  footer.site { position: relative; z-index: 2; border-top: 1px solid var(--line); padding: clamp(48px,7vh,80px) clamp(20px,5vw,64px) clamp(36px,5vh,56px); background:#f4f5f7; }
+  .foot-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; align-items: flex-start; }
+  .foot-iso { font-family: var(--font-body); font-size: 12.5px; line-height: 2; color: var(--gray); max-width: 32em; }
+  .iso-logo { height: 56px; width: auto; display: block; margin-bottom: 14px; }
+  .foot-nav { display: flex; gap: clamp(16px,2.4vw,30px); flex-wrap: wrap; }
+  .foot-nav a { font-family:'Inter',sans-serif; font-size: 13px; font-weight: 500; letter-spacing:.03em; color: var(--ink); text-decoration: none; transition: color .3s; white-space: nowrap; }
+  .foot-nav a:hover { color: var(--gray); }
+  .foot-copy { width: 100%; margin-top: clamp(28px,4vh,40px); padding-top: 20px; border-top: 1px solid var(--line); font-family:'Inter',sans-serif; font-size: 11.5px; letter-spacing:.06em; color: #9aa0ab; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <a class="brand" href="index.html"><img src="assets/logo-main.png" alt="PORTAMENT"></a>
+    <nav>
+      <a href="index.html#business">Business</a><a href="index.html#services">Service</a><a href="index.html#company">Company</a>
+      <a class="cta" href="index.html#contact"><span>Contact</span></a>
+    </nav>
+  </header>
+
+  <section class="legal-hero">
+    <div class="inner">
+      <p class="eyebrow">Information Security Policy</p>
+      <h1>情報セキュリティ方針</h1>
+      <p class="upd">最終更新日：2024年12月1日</p>
+    </div>
+  </section>
+
+  <section class="legal">
+    <div class="inner">
+      <p class="lead">当社の情報セキュリティ方針を、以下のように定めます。</p>
+      <p class="lead">株式会社PORTAMENT（以下、当社）は、当社の情報資産、並びにお客様からお預かりした情報資産を事故・災害・犯罪などの脅威から守り、お客様ならびに社会の信頼に応えるべく、以下の方針に基づき全社で情報セキュリティに取り組みます。</p>
+
+      <div class="item">
+        <h2>1. 経営者の責任</h2>
+        <p>当社は、経営者主導で組織的かつ継続的に情報セキュリティの改善・向上に努めます。</p>
+      </div>
+      <div class="item">
+        <h2>2. 社内体制の整備</h2>
+        <p>当社は、情報セキュリティの維持及び改善のために組織を設置し、情報セキュリティ対策を社内の正式な規則として定めます。</p>
+      </div>
+      <div class="item">
+        <h2>3. 従業員の取組み</h2>
+        <p>当社の従業員は、情報セキュリティのために必要とされる知識、技術を習得し、情報セキュリティへの取り組みを確かなものにします。</p>
+      </div>
+      <div class="item">
+        <h2>4. 法令及び契約上の要求事項の遵守</h2>
+        <p>当社は、情報セキュリティに関わる法令、規制、規範、契約上の義務を遵守するとともに、お客様の期待に応えます。</p>
+      </div>
+      <div class="item">
+        <h2>5. 違反及び事故への対応</h2>
+        <p>当社は、情報セキュリティに関わる法令違反、契約違反及び事故が発生した場合には適切に対処し、再発防止に努めます。</p>
+      </div>
+
+      <div class="sign">
+        制定日：2024年7月1日<br>
+        株式会社PORTAMENT<br>
+        代表取締役社長　羽田野 朔
+      </div>
+
+      <div class="note">当社は、ISO/IEC 27001（ISMS）認証をDQSより取得しています。</div>
+    </div>
+  </section>
+
+  <footer class="site">
+    <div class="foot-inner">
+      <div class="foot-iso"><img class="iso-logo" src="assets/logo-isms.png" alt="ISMS-AC / DQS ISO/IEC 27001 認証">当社は、ISO/IEC 27001（ISMS）認証をDQSより取得しています。</div>
+      <nav class="foot-nav">
+        <a href="index.html#business">Business</a>
+        <a href="index.html#services">Service</a>
+        <a href="index.html#company">Company</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="privacy-policy.html">プライバシーポリシー</a>
+        <a href="security-policy.html">情報セキュリティ方針</a>
+      </nav>
+    </div>
+    <div class="foot-copy">© 2026 PORTAMENT, inc. All Rights Reserved.</div>
+  </footer>
+</div>
+
+<script>
+  const hd = document.querySelector('header');
+  addEventListener('scroll', () => hd.classList.toggle('scrolled', scrollY > 40), { passive: true });
+</script>
+</body>
+</html>

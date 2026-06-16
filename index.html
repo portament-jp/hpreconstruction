@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>株式会社PORTAMENT</title>
+<meta name="description" content="成功への道をなめらかにつなぐ。株式会社PORTAMENTは、自社製AIエージェントによるソリューション・新規事業の共創・プロフェッショナルによる事業支援を展開しています。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* ============ PORTAMENT — Portamento Line（確定路線 c2 を継承） ============
+     白地・動くドット・全頁を貫く流線・罫線エディトリアル。
+     角丸カード/影/丸数字/連番/eyebrowラベル/英語飾りは使わない。 */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink: #18171a;
+    --gray: #61687a;
+    --line: rgba(16,18,22,.08);
+    --paper: #ffffff;
+    /* ロゴ実色 */
+    --red: #f04f32;
+    --amber: #e7bb29;
+    --lime: #c6e44d;
+    --teal: #19b7aa;
+    --cyan: #0daecc;
+    --blue: #1840cf;
+    --ease: cubic-bezier(.23, 1, .32, 1);
+    --font-body: 'IBM Plex Sans JP', sans-serif;   /* 説明文（本文）の書体 */
+    --sp-1: clamp(24px, 3vh, 40px);
+    --sp-2: clamp(48px, 7vh, 84px);
+    --sp-3: clamp(110px, 15vh, 180px);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Zen Kaku Gothic New', sans-serif; color: var(--ink);
+    background: #fff;
+    overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- ヘッダー: 浮遊する丸型ナビゲーション ---- */
+  header {
+    position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 50;
+    display: flex; align-items: center; gap: clamp(14px, 3vw, 34px);
+    padding: 10px 14px 10px 22px; border-radius: 999px;
+    background: rgba(247,248,249,.72); backdrop-filter: blur(16px) saturate(1.3);
+    border: 1px solid rgba(20,22,26,.08);
+    box-shadow: 0 10px 36px rgba(20,22,26,.10);
+    width: max-content; max-width: calc(100vw - 32px);
+    transition: box-shadow .4s;
+  }
+  header.scrolled { box-shadow: 0 14px 44px rgba(20,22,26,.14); }
+  .brand img { height: 40px; display: block; }
+  nav { display: flex; align-items: center; gap: clamp(12px, 2vw, 26px); }
+  nav a {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+    letter-spacing: .03em; color: var(--ink); text-decoration: none; position: relative;
+  }
+  /* ホバー: 下に小さなグラデの点 */
+  nav a:not(.cta)::after {
+    content: ''; position: absolute; left: 50%; bottom: -7px; width: 4px; height: 4px; border-radius: 50%;
+    transform: translateX(-50%) scale(0); transition: transform .3s var(--ease);
+  }
+  nav a:nth-child(1)::after { background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+  nav a:nth-child(2)::after { background: linear-gradient(90deg, var(--teal), var(--lime)); }
+  nav a:nth-child(3)::after { background: linear-gradient(90deg, var(--red), var(--amber)); }
+  nav a:not(.cta):hover::after { transform: translateX(-50%) scale(1); }
+  nav a.cta {
+    font-weight: 700; font-size: 13px; color: #fff; padding: 9px 20px; border-radius: 999px;
+    background: var(--ink); overflow: hidden; isolation: isolate;
+    transition: transform .25s, box-shadow .25s;
+  }
+  nav a.cta:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(20,22,26,.3); }
+  nav a.cta span { position: relative; z-index: 1; }
+  nav a.cta::before {
+    content: ''; position: absolute; inset: 0; z-index: 0;
+    background: linear-gradient(120deg, var(--blue), var(--cyan));
+    transform: translateY(101%); transition: transform .45s var(--ease);
+  }
+  nav a.cta:hover::before { transform: translateY(0); }
+  @media (max-width: 720px) { nav a:not(.cta) { display: none; } }
+
+  /* ---- 全頁を貫く流線（スクロール描画） ---- */
+  #flowSvg { position: absolute; top: 0; left: 0; width: 100%; z-index: 1; pointer-events: none; opacity: .92; }
+  #flowSvg path { will-change: stroke-dashoffset; }
+
+  /* ---- 点（動く背景の粒・c2 確定デザイン） ---- */
+  #pcanvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+  .wrap { position: relative; z-index: 2; }
+
+  /* ---- ヒーロー ---- */
+  .hero {
+    min-height: 100svh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    padding: 0 clamp(20px, 5vw, 64px); position: relative;
+  }
+  .logo-stage {
+    position: relative; z-index: 2;
+    width: min(1240px, 96vw);
+    opacity: 0; animation: stageIn 1.5s var(--ease) .2s forwards;
+  }
+  .logo-stage img { width: 100%; display: block; }
+  @keyframes stageIn { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+
+  #flowStartG { opacity: 0; animation: dotIn 1s ease 1.1s forwards; }
+  @keyframes dotIn { to { opacity: 1; } }
+
+  /* ---- セクションを繋ぐ提供SVGの線 ---- */
+  .official-flow { position: relative; width: 116%; margin-left: -8%; min-width: 940px; pointer-events: none; }
+  .official-flow img {
+    display: block; width: 100%; height: auto;
+    clip-path: inset(-3% 100% -3% 0);
+    transition: clip-path 2.6s cubic-bezier(.25,.6,.2,1);
+  }
+  .official-flow.on img { clip-path: inset(-3% 0% -3% 0); }
+  .official-flow.flip { margin-left: -8%; }
+  .official-flow.flip img { transform: scaleX(-1); }
+
+  /* ---- セクション共通 ---- */
+  section { padding: var(--sp-3) clamp(20px, 5vw, 64px); position: relative; }
+  .inner { max-width: 1100px; margin: 0 auto; }
+  .rv { opacity: 0; transform: translateY(28px); transition: opacity .9s ease var(--d, 0s), transform .9s var(--ease) var(--d, 0s); }
+  .rv.on { opacity: 1; transform: none; }
+  .sec-h { font-size: clamp(28px, 4.6vw, 48px); font-weight: 900; letter-spacing: .02em; font-feature-settings: "palt"; }
+  .sec-lede { margin-top: 14px; color: var(--gray); font-size: 14.5px; font-family: var(--font-body); line-height: 1.9; }
+
+  /* ---- MVV ---- */
+  .mvv-title {
+    font-family: 'Inter', sans-serif; font-size: clamp(14px, 1.6vw, 18px); font-weight: 600;
+    letter-spacing: .1em; color: #9aa0ab;
+  }
+  .mvv-states { margin-top: clamp(48px, 7vh, 84px); }
+  .mvv .state {
+    font-size: clamp(26px, 3.4vw, 42px); font-weight: 900; line-height: 1.5;
+    letter-spacing: .02em; font-feature-settings: "palt";
+  }
+  .mvv .state + .state { margin-top: clamp(56px, 9vh, 112px); }
+
+  /* ---- ビジネス3区分: インデックス・テーブル ---- */
+  .biz-h { font-size: clamp(28px, 4.6vw, 48px); font-weight: 900; letter-spacing: .02em; font-feature-settings: "palt"; }
+  .biz-lede { margin-top: 14px; color: var(--gray); font-size: 14.5px; font-family: var(--font-body); }
+  .biz-index {
+    margin-top: clamp(44px, 7vh, 72px);
+    border-top: 1px solid rgba(16,18,22,.16);
+  }
+  .biz-row {
+    display: grid;
+    grid-template-columns: minmax(240px, 0.85fr) 1.6fr;
+    column-gap: clamp(28px, 5vw, 72px);
+    align-items: center;
+    padding: clamp(36px, 5.5vh, 52px) clamp(8px, 1.4vw, 20px);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    text-decoration: none; color: inherit;
+    transition: background-color .35s ease;
+  }
+  .biz-row:hover { background: rgba(16,18,22,.03); }
+  .biz-row .ttl {
+    font-size: clamp(18px, 2.1vw, 22px); font-weight: 700;
+    letter-spacing: .01em; line-height: 1.5; font-feature-settings: "palt";
+  }
+  .biz-row .body { font-family: var(--font-body); font-size: 13.5px; line-height: 2.05; color: var(--gray); max-width: 46em; }
+  .biz-row .more {
+    margin-top: 16px; display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-body); font-size: 12.5px; font-weight: 600; letter-spacing: .06em; color: var(--ink);
+  }
+  .biz-row .more .ar {
+    font-family: 'Inter', sans-serif; font-style: normal;
+    transition: transform .3s cubic-bezier(.2,.7,.3,1);
+  }
+  .biz-row:hover .more .ar { transform: translateX(4px); }
+  .biz-row .more .lbl {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px; background-position: 0 100%; background-repeat: no-repeat;
+    transition: background-size .35s ease;
+  }
+  .biz-row:hover .more .lbl { background-size: 100% 1px; }
+  @media (max-width: 720px) {
+    .biz-row { grid-template-columns: 1fr; row-gap: 12px; padding: 32px 4px; align-items: start; }
+    .biz-row .body { max-width: none; }
+  }
+
+  /* ---- 語源 ---- */
+  .etymology {
+    font-family: var(--font-body);
+    font-size: 12.5px; line-height: 2.2; color: #8a91a0;
+    max-width: 46em;
+  }
+
+  /* ---- サービス詳細（罫線エディトリアル） ---- */
+  .offer { border-top: 1px solid rgba(16,18,22,.16); margin-top: clamp(44px, 7vh, 72px); }
+  .offer-row {
+    padding: clamp(40px,6vh,64px) clamp(8px,1.4vw,20px);
+    border-bottom: 1px solid var(--line);
+  }
+  .offer-row .oh { font-size: clamp(20px,2.4vw,26px); font-weight: 700; font-feature-settings:"palt"; letter-spacing:.01em; }
+  .offer-row .od { margin-top: 12px; font-family: var(--font-body); font-size: 14px; line-height: 2; color: var(--gray); max-width: 44em; }
+  /* スペック（label｜value、罫線のみ） */
+  .spec { margin-top: 26px; max-width: 760px; }
+  .spec .r {
+    display: grid; grid-template-columns: minmax(120px,.42fr) 1fr; gap: clamp(16px,3vw,44px);
+    padding: 15px 0; border-top: 1px solid var(--line); align-items: baseline;
+  }
+  .spec .r:first-child { border-top: none; }
+  .spec .k { font-family: var(--font-body); font-size: 12.5px; letter-spacing:.04em; color: #8a91a0; }
+  .spec .v { font-size: 15px; font-weight: 600; font-feature-settings:"palt"; line-height: 1.8; }
+  .spec .v .u { font-size: 12.5px; font-weight: 500; color: var(--gray); margin-left: 6px; font-family: var(--font-body); }
+  @media (max-width:720px){ .spec .r { grid-template-columns: 1fr; gap: 4px; } }
+  .offer-links { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 14px 30px; }
+  .svc-link {
+    font-family: var(--font-body); font-size: 12.5px; font-weight: 600; letter-spacing:.04em;
+    color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .svc-link .lbl {
+    background-image: linear-gradient(currentColor,currentColor); background-size: 0% 1px;
+    background-position: 0 100%; background-repeat: no-repeat; transition: background-size .35s ease;
+  }
+  .svc-link:hover .lbl { background-size: 100% 1px; }
+  .svc-link .ar { font-family:'Inter',sans-serif; transition: transform .3s cubic-bezier(.2,.7,.3,1); }
+  .svc-link:hover .ar { transform: translateX(4px); }
+
+  /* ---- サービス: 区分ごとにブランドカードを並べる（罫線・カード/影なし） ---- */
+  .pillar { margin-top: clamp(56px, 9vh, 100px); }
+  .pillar:first-of-type { margin-top: clamp(44px, 7vh, 72px); }
+  .pillar-h {
+    font-size: clamp(20px, 2.8vw, 30px); font-weight: 900; font-feature-settings: "palt"; letter-spacing: .01em;
+  }
+  .pillar-body { margin-top: 18px; font-family: var(--font-body); font-size: 14px; line-height: 2; color: var(--gray); max-width: 52em; }
+  .svc { margin-top: clamp(26px, 4vh, 40px); display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 4.5vw, 60px); }
+  .svc.one { grid-template-columns: 1fr; max-width: 660px; }
+  @media (max-width: 760px) { .svc { grid-template-columns: 1fr; gap: 40px; } }
+  /* カード全体がクリック可能（リンクテキストは置かない） */
+  .svc-card { display: flex; flex-direction: column; border-top: 2px solid var(--ink); padding: 24px 6px 26px; text-decoration: none; color: inherit; cursor: pointer; transition: border-color .35s var(--ease), background-color .35s, transform .35s var(--ease); }
+  .svc-card:hover { border-color: #1840cf; background: rgba(16,18,22,.025); transform: translateY(-4px); }
+  .svc-brand { min-height: 176px; display: flex; align-items: center; }
+  .svc-brand img { display: block; width: auto; max-width: 94%; }
+  .card-arrow { margin-top: auto; padding-top: 22px; font-family: 'Inter', sans-serif; font-size: 22px; color: var(--ink); align-self: flex-start; transition: transform .32s cubic-bezier(.2,.7,.3,1); }
+  .svc-card:hover .card-arrow { transform: translateX(7px); }
+  .svc-desc { margin-top: 12px; font-family: var(--font-body); font-size: 13.5px; line-height: 1.95; color: var(--gray); }
+  .svc-pts { margin-top: 16px; list-style: none; display: grid; gap: 11px; }
+  .svc-pts li { position: relative; padding-left: 18px; font-family: var(--font-body); font-size: 13.5px; line-height: 1.7; color: var(--ink); }
+  .svc-pts li::before { content: ''; position: absolute; left: 2px; top: .66em; width: 7px; height: 1px; background: var(--ink); }
+  .svc-card .svc-link { margin-top: 20px; }
+
+  /* ---- 会社概要テーブル ---- */
+  .about { border-top: 1px solid rgba(16,18,22,.16); margin-top: clamp(40px,7vh,64px); }
+  .about .r {
+    display: grid; grid-template-columns: minmax(140px,.34fr) 1fr; gap: clamp(20px,4vw,56px);
+    padding: clamp(18px,2.4vh,24px) clamp(8px,1.4vw,20px); border-bottom: 1px solid var(--line); align-items: baseline;
+  }
+  .about .k { font-family: var(--font-body); font-size: 13px; letter-spacing:.04em; color: #8a91a0; }
+  .about .v { font-size: 15px; line-height: 1.9; font-feature-settings:"palt"; }
+  .about .v a { color: var(--ink); text-decoration: none; border-bottom: 1px solid rgba(16,18,22,.3); padding-bottom: 1px; transition: border-color .3s; }
+  .about .v a:hover { border-color: var(--ink); }
+  @media (max-width:720px){ .about .r { grid-template-columns: 1fr; gap: 6px; } }
+
+  /* ---- お問い合わせフォーム ---- */
+  .contact-grid { margin-top: clamp(40px,7vh,64px); max-width: 720px; }
+  .field { margin-bottom: clamp(24px,4vh,34px); }
+  .field label { display: block; font-family: var(--font-body); font-size: 12.5px; letter-spacing:.05em; color: #8a91a0; margin-bottom: 10px; }
+  .field input, .field textarea {
+    width: 100%; font-family: var(--font-body); font-size: 15px; color: var(--ink);
+    background: transparent; border: none; border-bottom: 1px solid rgba(16,18,22,.22);
+    padding: 8px 2px; outline: none; transition: border-color .3s;
+  }
+  .field textarea { resize: vertical; min-height: 120px; line-height: 1.8; }
+  .field input:focus, .field textarea:focus { border-color: var(--ink); }
+  .submit {
+    font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; color: #fff;
+    background: var(--ink); border: none; cursor: pointer;
+    padding: 15px 40px; border-radius: 999px; letter-spacing:.04em;
+    position: relative; overflow: hidden; isolation: isolate; transition: transform .25s, box-shadow .25s;
+  }
+  .submit:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(20,22,26,.28); }
+  .submit span { position: relative; z-index: 1; }
+  .submit::before { content:''; position:absolute; inset:0; z-index:0; background: linear-gradient(120deg,var(--blue),var(--cyan)); transform: translateY(101%); transition: transform .45s var(--ease); }
+  .submit:hover::before { transform: translateY(0); }
+  .form-done { display: none; font-size: clamp(16px,2.2vw,20px); line-height: 2; font-feature-settings:"palt"; }
+  .form-done.show { display: block; }
+
+  /* ---- フッター ---- */
+  footer.site {
+    position: relative; z-index: 2; border-top: 1px solid var(--line);
+    padding: clamp(48px,7vh,80px) clamp(20px,5vw,64px) clamp(36px,5vh,56px);
+  }
+  .foot-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; align-items: flex-start; }
+  .foot-iso { font-family: var(--font-body); font-size: 12.5px; line-height: 2; color: var(--gray); max-width: 32em; }
+  .iso-logo { height: 56px; width: auto; display: block; margin-bottom: 14px; }
+  .foot-nav { display: flex; gap: clamp(16px,2.4vw,30px); flex-wrap: wrap; }
+  .foot-nav a { font-family:'Inter',sans-serif; font-size: 13px; font-weight: 500; letter-spacing:.03em; color: var(--ink); text-decoration: none; transition: color .3s; }
+  .foot-nav a:hover { color: var(--gray); }
+  .foot-copy { width: 100%; margin-top: clamp(28px,4vh,40px); padding-top: 20px; border-top: 1px solid var(--line); font-family:'Inter',sans-serif; font-size: 11.5px; letter-spacing:.06em; color: #9aa0ab; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo-stage { animation: none; opacity: 1; }
+    #pcanvas { display: none; }
+    .official-flow img { clip-path: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="pcanvas"></canvas>
+<svg id="flowSvg" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="flowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1840cf"/>
+      <stop offset="28%" stop-color="#0daecc"/>
+      <stop offset="55%" stop-color="#19b7aa"/>
+      <stop offset="78%" stop-color="#e7bb29"/>
+      <stop offset="100%" stop-color="#f04f32"/>
+    </linearGradient>
+    <radialGradient id="dotGrad" cx="35%" cy="35%" r="68%">
+      <stop offset="0%" stop-color="#3aa0e6"/>
+      <stop offset="100%" stop-color="#1840cf"/>
+    </radialGradient>
+  </defs>
+  <path id="flowPath" fill="none" stroke="url(#flowGrad)" stroke-width="3" stroke-linecap="round"/>
+  <g id="flowStartG">
+    <circle id="flowRing" r="5" fill="none" stroke="#1840cf" stroke-width="1.4" opacity="0">
+      <animate attributeName="r" values="5;15" dur="3.4s" begin="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.2;0" dur="3.4s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle id="flowStart" r="4.5" fill="url(#dotGrad)"/>
+  </g>
+</svg>
+
+<div class="wrap">
+  <header>
+    <a class="brand" href="#"><img src="assets/logo-main.png" alt="PORTAMENT"></a>
+    <nav>
+      <a href="#business">Business</a><a href="#services">Service</a><a href="#company">Company</a>
+      <a class="cta" href="#contact"><span>Contact</span></a>
+    </nav>
+  </header>
+
+  <!-- ヒーロー -->
+  <section class="hero">
+    <div class="logo-stage"><img src="assets/logo-main.png" alt="PORTAMENT"></div>
+  </section>
+
+  <!-- ヒーロー→MVV: 寒色線 -->
+  <div class="official-flow" aria-hidden="true"><img src="assets/flow-line-cool.svg" alt=""></div>
+
+  <!-- MVV -->
+  <section class="mvv">
+    <div class="inner">
+      <p class="mvv-title rv">Mission, Vision &amp; Value</p>
+      <div class="mvv-states">
+        <p class="state rv" style="--d:.1s;">成功への道をなめらかにつなぐ</p>
+        <p class="state rv" style="--d:.24s;">企業の変革基盤を提供する</p>
+        <p class="state rv" style="--d:.38s;">顧客第一で、周囲を助け、巻き込み、やり切る</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MVV→ビジネス: 暖色線 -->
+  <div class="official-flow flip" aria-hidden="true"><img src="assets/flow-line-warm2.svg" alt=""></div>
+
+  <!-- ビジネス3区分 -->
+  <section id="business">
+    <div class="inner">
+      <h2 class="biz-h rv">PORTAMENTのビジネス</h2>
+      <p class="biz-lede rv">PORTAMENTは、3種類のビジネスを展開しています</p>
+      <div class="biz-index">
+        <a class="biz-row rv" href="#sec-cocreation">
+          <div class="ttl">新規事業・サービスの共創</div>
+          <div>
+            <p class="body">パートナー企業の新規事業において、弊社がシステム開発やマネジメントを無償で担当し、事業の利益をシェアする、ピュアな共創サービスを展開しています</p>
+            <span class="more"><span class="lbl">詳しく見る</span><i class="ar">→</i></span>
+          </div>
+        </a>
+        <a class="biz-row rv" href="#sec-solution" style="--d:.08s;">
+          <div class="ttl">自社製AIエージェントによる<br>ソリューション</div>
+          <div>
+            <p class="body">自社製の、AI・自動化に関わる様々な機能（WebRPA・iPaaS・チャットボット・ナレッジベース等）を持つSaaSを活用し、現場に即した自動化関連サービスをハンズオンで展開しています</p>
+            <span class="more"><span class="lbl">詳しく見る</span><i class="ar">→</i></span>
+          </div>
+        </a>
+        <a class="biz-row rv" href="#sec-support" style="--d:.16s;">
+          <div class="ttl">プロフェッショナルによる<br>事業支援</div>
+          <div>
+            <p class="body">戦略、業務、IT、広告、採用など、あらゆる領域のプロフェッショナルがお客様の事業を支援いたします</p>
+            <span class="more"><span class="lbl">詳しく見る</span><i class="ar">→</i></span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 語源: 目立たない場所に小さく -->
+  <section style="padding-top: 0;">
+    <div class="inner">
+      <p class="etymology rv">PORTAMENT（源：イタリア語 portamento）—音楽用語で、ある音から次の音へと継続的に滑るようになめらかに音を運ぶことによって得られる演奏上の効果をいう</p>
+    </div>
+  </section>
+
+  <!-- サービス: 各区分にブランドを並べる（test-site準拠） -->
+  <section id="services">
+    <div class="inner">
+      <h2 class="sec-h rv">サービス</h2>
+      <p class="sec-lede rv">3種類のビジネスを、それぞれ具体的なサービスとしてご提供しています。</p>
+
+      <!-- 新規事業・サービスの共創 -->
+      <div class="pillar rv" id="sec-cocreation">
+        <h3 class="pillar-h">新規事業・サービスの共創</h3>
+        <div class="svc">
+          <a class="svc-card" href="agentpartner.html">
+            <div class="svc-brand"><img src="assets/logo-agentpartner.png" alt="Agentpartner" style="height:168px;"></div>
+            <p class="svc-desc">新規事業に必要なシステム（マッチングプラットフォームなど）を弊社が無償で構築し、利益をシェアするサービス。</p>
+            <ul class="svc-pts">
+              <li>ノーリスクで事業がスタートできる</li>
+              <li>通常の約半分の期間で構築が可能</li>
+              <li>無償対応の保守・追加開発も品質・スピードが一定保証</li>
+            </ul>
+          </a>
+          <a class="svc-card" href="agentmaker.html">
+            <div class="svc-brand"><img src="assets/logo-agentmaker.png" alt="Agentmaker" style="height:168px;"></div>
+            <p class="svc-desc">パートナー企業が展開するSaaS等Webサービスに対して、弊社が無償でAIエージェント機能や自動化の機能を付加。既存顧客へオプション課金を実施し、利益をシェアするサービス。</p>
+            <ul class="svc-pts">
+              <li>開発費用なしでアップセルが可能</li>
+              <li>AI・自動化機能の付加によるプロダクト価値の向上</li>
+              <li>無償対応の保守・追加開発も品質・スピードが一定保証</li>
+            </ul>
+          </a>
+        </div>
+      </div>
+
+      <!-- 自社製AIエージェントによるソリューション -->
+      <div class="pillar rv" id="sec-solution">
+        <h3 class="pillar-h">自社製AIエージェントによるソリューション</h3>
+        <div class="svc">
+          <a class="svc-card" href="https://newcrews.jp" target="_blank" rel="noopener">
+            <div class="svc-brand"><img src="assets/logo-newcrews.png" alt="NewCrews" style="height:50px;"></div>
+            <p class="svc-desc">経理や人事労務、庶務等バックオフィス業務をオンラインで代行し、代行した業務を自動化します。</p>
+            <ul class="svc-pts">
+              <li>1時間3500円</li>
+              <li>1時間だけでも発注可能、初期費用なし、使った分だけ</li>
+              <li>管理者費用は無償</li>
+            </ul>
+          </a>
+          <a class="svc-card" href="https://venture.bizinnovator.ai/" target="_blank" rel="noopener">
+            <div class="svc-brand"><img src="assets/logo-aiinnovator.png" alt="AI業務イノベーター" style="height:84px;"></div>
+            <p class="svc-desc">メニューに応じた自動化・代行を破格で実施。導入にあたってはサポート部隊がハンズオンで自動化・代行します。</p>
+            <ul class="svc-pts">
+              <li>処理量に関わらず月額3万円</li>
+              <li>最短即日から、スピーディーにサポート部隊がハンズオンで代行＆自動化</li>
+            </ul>
+          </a>
+        </div>
+      </div>
+
+      <!-- プロフェッショナルによる事業支援 -->
+      <div class="pillar rv" id="sec-support">
+        <h3 class="pillar-h">プロフェッショナルによる事業支援</h3>
+        <div class="svc">
+          <a class="svc-card" href="wavelopment.html">
+            <div class="svc-brand"><img src="assets/logo-wavelopment.png" alt="WAVELOPMENT" style="height:160px;"></div>
+            <p class="svc-desc">独自の仕組を利用した最速・最安の受託開発サービス。</p>
+            <ul class="svc-pts">
+              <li>独自の開発プロセスによる最速・最安の開発</li>
+              <li>AI・自動化領域であれば、弊社製SaaSからのコーディング転用も可能</li>
+              <li>必要に応じてPM・PMO支援も可能</li>
+            </ul>
+          </a>
+          <a class="svc-card" href="allrounder.html">
+            <div class="svc-brand"><img src="assets/logo-allrounder.png" alt="ALLROUNDER" style="height:70px;"></div>
+            <p class="svc-desc">厳選したフリーランスによるあらゆるプロジェクトの支援サービス。</p>
+            <ul class="svc-pts">
+              <li>独自の開発プロセスによる最速・最安の開発</li>
+              <li>AI・自動化領域であれば、弊社製SaaSからのコーディング転用も可能</li>
+              <li>必要に応じてPM・PMO支援も可能</li>
+            </ul>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 会社概要 -->
+  <section id="company">
+    <div class="inner">
+      <h2 class="sec-h rv">会社概要</h2>
+      <div class="about rv">
+        <div class="r"><div class="k">社名</div><div class="v">株式会社PORTAMENT</div></div>
+        <div class="r"><div class="k">代表取締役</div><div class="v">羽田野 朔 <span style="color:var(--gray);font-size:13px;">（<a href="https://drive.google.com/file/d/1uxf8X6kA6g3XtL6JBy3pbasxa2iT2pXv/view" target="_blank" rel="noopener">代表プロフィール</a>）</span></div></div>
+        <div class="r"><div class="k">設立</div><div class="v">2022年3月</div></div>
+        <div class="r"><div class="k">資本金</div><div class="v">1,000万円</div></div>
+        <div class="r"><div class="k">所在地</div><div class="v">東京都渋谷区恵比寿南1-20-6 プレファス恵比寿南4F</div></div>
+        <div class="r"><div class="k">従業員</div><div class="v">約100名（業務委託含む）</div></div>
+        <div class="r"><div class="k">取引銀行</div><div class="v">三菱UFJ銀行・りそな銀行・群馬銀行・楽天銀行</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- お問い合わせ -->
+  <section id="contact">
+    <div class="inner">
+      <h2 class="sec-h rv">お問い合わせ</h2>
+      <p class="sec-lede rv">ご相談・ご依頼など、お気軽にお問い合わせください。</p>
+      <form class="contact-grid rv" id="contactForm" novalidate>
+        <div class="field">
+          <label for="cf-name">お名前</label>
+          <input type="text" id="cf-name" name="name" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="cf-email">メールアドレス</label>
+          <input type="email" id="cf-email" name="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="cf-company">会社名</label>
+          <input type="text" id="cf-company" name="company" autocomplete="organization">
+        </div>
+        <div class="field">
+          <label for="cf-message">お問い合わせ内容</label>
+          <textarea id="cf-message" name="message" required></textarea>
+        </div>
+        <button type="submit" class="submit"><span>送信する</span></button>
+      </form>
+      <p class="form-done" id="formDone">お問い合わせありがとうございます。<br>担当者より2営業日以内にご連絡致します。</p>
+    </div>
+  </section>
+
+  <!-- フッター -->
+  <footer class="site">
+    <div class="foot-inner">
+      <div class="foot-iso"><img class="iso-logo" src="assets/logo-isms.png" alt="ISMS-AC / DQS ISO/IEC 27001 認証">当社は、ISO/IEC 27001（ISMS）認証をDQSより取得しています。</div>
+      <nav class="foot-nav">
+        <a href="#business">Business</a>
+        <a href="#services">Service</a>
+        <a href="#company">Company</a>
+        <a href="#contact">Contact</a>
+        <a href="privacy-policy.html">プライバシーポリシー</a>
+        <a href="security-policy.html">情報セキュリティ方針</a>
+      </nav>
+    </div>
+    <div class="foot-copy">© 2026 PORTAMENT, inc. All Rights Reserved.</div>
+  </footer>
+</div>
+
+<script>
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ヘッダー: スクロールで磨りガラス化
+  const hd = document.querySelector('header');
+  addEventListener('scroll', () => hd.classList.toggle('scrolled', scrollY > 40), { passive: true });
+
+  /* ===== 全頁を貫く流線 ===== */
+  const svg = document.getElementById('flowSvg');
+  const path = document.getElementById('flowPath');
+  const flowStartG = document.getElementById('flowStartG');
+  const logoStage = document.querySelector('.logo-stage');
+  let pathLen = 0;
+
+  function layoutCenter(el) {
+    let x = 0, y = 0;
+    const w = el.offsetWidth, h = el.offsetHeight;
+    while (el) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; }
+    return { x: x + w / 2, y: y + h / 2 };
+  }
+
+  function buildPath() {
+    const W = innerWidth;
+    const H = document.documentElement.scrollHeight;
+    svg.setAttribute('width', W);
+    svg.setAttribute('height', H);
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const lc = layoutCenter(logoStage);
+    const startX = lc.x;
+    const startY = lc.y + logoStage.offsetHeight / 2 + 64;
+    flowStartG.setAttribute('transform', `translate(${startX} ${startY})`);
+    const amp = Math.min(W * .32, 440);
+    const cxL = W / 2 - amp, cxR = W / 2 + amp;
+    const seg = (H - startY - 120) / 4;
+    let d = `M ${startX} ${startY}`;
+    d += ` C ${startX} ${startY + seg * .55}, ${cxL} ${startY + seg * .45}, ${cxL} ${startY + seg}`;
+    d += ` S ${cxR} ${startY + seg * 1.6}, ${cxR} ${startY + seg * 2}`;
+    d += ` S ${cxL} ${startY + seg * 2.6}, ${cxL} ${startY + seg * 3}`;
+    d += ` S ${W / 2} ${startY + seg * 3.7}, ${W / 2} ${startY + seg * 4}`;
+    path.setAttribute('d', d);
+    pathLen = path.getTotalLength();
+    path.style.strokeDasharray = pathLen;
+    drawOnScroll();
+  }
+  function drawOnScroll() {
+    const h = document.documentElement;
+    const p = Math.min(1, h.scrollTop / (h.scrollHeight - h.clientHeight) * 1.12);
+    path.style.strokeDashoffset = pathLen * (1 - p);
+  }
+  if (!REDUCED) {
+    addEventListener('scroll', drawOnScroll, { passive: true });
+    addEventListener('resize', buildPath);
+    addEventListener('load', buildPath);
+    buildPath();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildPath);
+    document.querySelectorAll('img').forEach(img => {
+      if (!img.complete) img.addEventListener('load', buildPath, { once: true });
+    });
+    if (window.ResizeObserver) new ResizeObserver(() => buildPath()).observe(document.body);
+    setTimeout(buildPath, 2600);
+  } else {
+    svg.style.display = 'none';
+  }
+
+  /* ===== 点: 少なく・小さく・ロゴ付近には置かない（c2） ===== */
+  const cv = document.getElementById('pcanvas');
+  if (!REDUCED) {
+    const ctx = cv.getContext('2d');
+    const COLORS = ['#1840cf', '#0daecc', '#19b7aa', '#e7bb29', '#f04f32'];
+    let parts = [], mx = -9999, my = -9999;
+    function inLogoZone(x, y) {
+      const cx = cv.width / 2, cy = cv.height * .42;
+      const rx = Math.min(cv.width * .38, 600), ry = Math.min(cv.height * .3, 320);
+      const dx = (x - cx) / rx, dy = (y - cy) / ry;
+      return dx * dx + dy * dy < 1;
+    }
+    function spawn(i) {
+      let x = 0, y = 0, tries = 0;
+      do { x = Math.random() * cv.width; y = Math.random() * cv.height; tries++; } while (tries < 24 && inLogoZone(x, y));
+      return { x, y, vx: (Math.random() - .5) * .22, vy: (Math.random() - .5) * .22, r: 2.5 + Math.random() * 3.5, c: COLORS[i % COLORS.length], o: .22 + Math.random() * .23, par: 0.08 + Math.random() * 0.32 };
+    }
+    function initParticles() { cv.width = innerWidth; cv.height = innerHeight; const n = Math.min(20, Math.floor(innerWidth / 95)); parts = Array.from({ length: n }, (_, i) => spawn(i)); }
+    addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+    addEventListener('resize', initParticles);
+    initParticles();
+    (function loop() {
+      const H = cv.height; const sY = window.scrollY;
+      ctx.clearRect(0, 0, cv.width, H);
+      for (const p of parts) {
+        let drawY = ((p.y - sY * p.par) % H + H) % H;
+        const dx = p.x - mx, dy = drawY - my, d2 = dx * dx + dy * dy;
+        if (d2 < 16000) { const f = 12 / Math.sqrt(d2 + 60); p.vx += dx * f * .003; p.vy += dy * f * .003; }
+        if (inLogoZone(p.x, drawY)) { const cx = cv.width / 2, cy = cv.height * .42; const ox = p.x - cx, oy = drawY - cy, on = Math.hypot(ox, oy) + 1; p.vx += (ox / on) * .012; p.vy += (oy / on) * .012; }
+        p.vx *= .985; p.vy *= .985; p.x += p.vx; p.y += p.vy;
+        if (p.x < -16) p.x = cv.width + 16; if (p.x > cv.width + 16) p.x = -16;
+        if (p.y < -16) p.y += H; if (p.y > H + 16) p.y -= H;
+        ctx.globalAlpha = p.o; ctx.fillStyle = p.c;
+        ctx.beginPath(); ctx.arc(p.x, drawY, p.r, 0, 7); ctx.fill();
+      }
+      ctx.globalAlpha = 1; requestAnimationFrame(loop);
+    })();
+  }
+
+  /* ===== スクロールリビール ===== */
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
+  }), { threshold: .16 });
+  document.querySelectorAll('.rv, .official-flow').forEach(el => io.observe(el));
+
+  /* ===== お問い合わせフォーム（フロントのみ・送信後メッセージ） ===== */
+  const form = document.getElementById('contactForm');
+  if (form) form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    form.style.display = 'none';
+    document.getElementById('formDone').classList.add('show');
+    document.getElementById('formDone').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+</script>
+</body>
+</html>

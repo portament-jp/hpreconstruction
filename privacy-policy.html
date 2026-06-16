@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>プライバシーポリシー — 株式会社PORTAMENT</title>
+<meta name="description" content="株式会社PORTAMENTのプライバシーポリシー。お客様の個人データの収集・利用・開示に関する当社の方針と手続きを説明します。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink: #18171a; --gray: #61687a; --line: rgba(16,18,22,.08); --paper: #ffffff;
+    --red: #f04f32; --amber: #e7bb29; --lime: #c6e44d; --teal: #19b7aa; --cyan: #0daecc; --blue: #1840cf;
+    --ease: cubic-bezier(.23, 1, .32, 1);
+    --font-body: 'IBM Plex Sans JP', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Zen Kaku Gothic New', sans-serif; color: var(--ink); background: #f4f5f7; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+  /* ---- ヘッダー（浮遊ピル・サイト共通） ---- */
+  header {
+    position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 50;
+    display: flex; align-items: center; gap: clamp(14px, 3vw, 34px);
+    padding: 10px 14px 10px 22px; border-radius: 999px;
+    background: rgba(247,248,249,.78); backdrop-filter: blur(16px) saturate(1.3);
+    border: 1px solid rgba(20,22,26,.08); box-shadow: 0 10px 36px rgba(20,22,26,.10);
+    width: max-content; max-width: calc(100vw - 32px); transition: box-shadow .4s;
+  }
+  header.scrolled { box-shadow: 0 14px 44px rgba(20,22,26,.14); }
+  .brand img { height: 40px; display: block; }
+  nav { display: flex; align-items: center; gap: clamp(12px, 2vw, 26px); }
+  nav a { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: .03em; color: var(--ink); text-decoration: none; position: relative; }
+  nav a:not(.cta)::after { content: ''; position: absolute; left: 50%; bottom: -7px; width: 4px; height: 4px; border-radius: 50%; transform: translateX(-50%) scale(0); transition: transform .3s var(--ease); }
+  nav a:nth-child(1)::after { background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+  nav a:nth-child(2)::after { background: linear-gradient(90deg, var(--teal), var(--lime)); }
+  nav a:nth-child(3)::after { background: linear-gradient(90deg, var(--red), var(--amber)); }
+  nav a:not(.cta):hover::after { transform: translateX(-50%) scale(1); }
+  nav a.cta { font-weight: 700; font-size: 13px; color: #fff; padding: 9px 20px; border-radius: 999px; background: var(--ink); overflow: hidden; isolation: isolate; transition: transform .25s, box-shadow .25s; }
+  nav a.cta:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(20,22,26,.3); }
+  nav a.cta span { position: relative; z-index: 1; }
+  nav a.cta::before { content: ''; position: absolute; inset: 0; z-index: 0; background: linear-gradient(120deg, var(--blue), var(--cyan)); transform: translateY(101%); transition: transform .45s var(--ease); }
+  nav a.cta:hover::before { transform: translateY(0); }
+  @media (max-width: 720px) { nav a:not(.cta) { display: none; } }
+
+  /* ---- 法務ページ ---- */
+  .legal-hero { padding: clamp(120px,16vh,180px) clamp(20px,5vw,64px) clamp(36px,5vh,56px); border-bottom: 1px solid var(--line); background: #fff; }
+  .legal-hero .inner { max-width: 880px; margin: 0 auto; }
+  .legal-hero .eyebrow { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .14em; color: var(--cyan); text-transform: uppercase; }
+  .legal-hero h1 { margin-top: 12px; font-size: clamp(28px,4.6vw,46px); font-weight: 900; letter-spacing: .02em; font-feature-settings: "palt"; }
+  .legal-hero .upd { margin-top: 16px; font-family: var(--font-body); font-size: 13px; color: var(--gray); }
+
+  .legal { padding: clamp(44px,6vh,72px) clamp(20px,5vw,64px) clamp(64px,9vh,110px); }
+  .legal .inner { max-width: 880px; margin: 0 auto; }
+  .legal .lead { font-family: var(--font-body); font-size: 15px; line-height: 2; color: var(--ink); }
+  .legal .lead + .lead { margin-top: 18px; }
+  .legal h2 { margin-top: clamp(38px,5.5vh,56px); font-size: clamp(18px,2.4vw,25px); font-weight: 900; font-feature-settings: "palt"; padding-bottom: 12px; border-bottom: 2px solid var(--ink); }
+  .legal h3 { margin-top: clamp(22px,3vh,30px); font-size: 15.5px; font-weight: 700; color: var(--ink); }
+  .legal p { margin-top: 14px; font-family: var(--font-body); font-size: 14px; line-height: 1.95; color: var(--gray); }
+  .legal ul { margin-top: 14px; list-style: none; display: grid; gap: 11px; }
+  .legal li { position: relative; padding-left: 19px; font-family: var(--font-body); font-size: 14px; line-height: 1.9; color: var(--gray); }
+  .legal li::before { content: ''; position: absolute; left: 2px; top: .72em; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); }
+  .legal li b { color: var(--ink); font-weight: 700; }
+  .legal .terms { margin-top: 16px; display: grid; gap: 13px; }
+  .legal .terms .t { font-family: var(--font-body); font-size: 14px; line-height: 1.9; color: var(--gray); }
+  .legal .terms .t b { color: var(--ink); font-weight: 700; }
+  .legal a.inline { color: var(--blue); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+  .legal .note { margin-top: clamp(40px,6vh,60px); padding: clamp(18px,2.6vh,24px) clamp(18px,2.4vw,26px); background: #eef2f8; border-radius: 14px; font-family: var(--font-body); font-size: 13px; line-height: 1.9; color: var(--gray); }
+
+  /* ---- フッター（サイト共通） ---- */
+  footer.site { position: relative; z-index: 2; border-top: 1px solid var(--line); padding: clamp(48px,7vh,80px) clamp(20px,5vw,64px) clamp(36px,5vh,56px); background:#f4f5f7; }
+  .foot-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; align-items: flex-start; }
+  .foot-iso { font-family: var(--font-body); font-size: 12.5px; line-height: 2; color: var(--gray); max-width: 32em; }
+  .iso-logo { height: 56px; width: auto; display: block; margin-bottom: 14px; }
+  .foot-nav { display: flex; gap: clamp(16px,2.4vw,30px); flex-wrap: wrap; }
+  .foot-nav a { font-family:'Inter',sans-serif; font-size: 13px; font-weight: 500; letter-spacing:.03em; color: var(--ink); text-decoration: none; transition: color .3s; white-space: nowrap; }
+  .foot-nav a:hover { color: var(--gray); }
+  .foot-copy { width: 100%; margin-top: clamp(28px,4vh,40px); padding-top: 20px; border-top: 1px solid var(--line); font-family:'Inter',sans-serif; font-size: 11.5px; letter-spacing:.06em; color: #9aa0ab; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <a class="brand" href="index.html"><img src="assets/logo-main.png" alt="PORTAMENT"></a>
+    <nav>
+      <a href="index.html#business">Business</a><a href="index.html#services">Service</a><a href="index.html#company">Company</a>
+      <a class="cta" href="index.html#contact"><span>Contact</span></a>
+    </nav>
+  </header>
+
+  <section class="legal-hero">
+    <div class="inner">
+      <p class="eyebrow">Privacy Policy</p>
+      <h1>プライバシーポリシー</h1>
+      <p class="upd">最終更新日：2024年7月1日</p>
+    </div>
+  </section>
+
+  <section class="legal">
+    <div class="inner">
+      <p class="lead">本プライバシーポリシーは、サービスをご利用いただく際に当社がお客様の情報をどのように収集、利用、開示するか、お客様のプライバシー権利と法律によってお客様がどのように保護されるかについての当社の方針と手続きを説明します。</p>
+      <p class="lead">当社は、お客様の個人データをサービスの提供および改善に使用します。サービスを利用することにより、お客様は本プライバシーポリシーに従って情報の収集および利用に同意するものとします。</p>
+
+      <h2>定義</h2>
+      <p>本プライバシーポリシーにおいて、</p>
+      <div class="terms">
+        <p class="t"><b>「アカウント」</b>は、お客様が当社のサービスまたは当社のサービスの一部にアクセスするために作成される一意なアカウントを意味します。</p>
+        <p class="t"><b>「関連会社」</b>は、当社またはお客様がコントロールする、コントロールされる、または共通のコントロール下にある法人を意味します。ここで「コントロール」とは、取締役または他の経営権限の選出に投票する権利を有する株式、持分、またはその他の証券の50％以上を所有することを意味します。</p>
+        <p class="t"><b>「当社」</b>は株式会社PORTAMENT（東京都渋谷区恵比寿南1-20-6 プレファス恵比寿南4F）を指します。</p>
+        <p class="t"><b>「国」</b>は、日本を指します。</p>
+        <p class="t"><b>「デバイス」</b>は、コンピュータ、携帯電話、デジタルタブレットなど、サービスにアクセスできる任意のデバイスを意味します。</p>
+        <p class="t"><b>「個人データ」</b>は、特定または特定可能な個人に関連するあらゆる情報を意味します。</p>
+        <p class="t"><b>「サービス」</b>は、当社によって提供されるソフトウェアプログラムであるOpsGuideを含むサービス全てを指します。</p>
+        <p class="t"><b>「サービスプロバイダー」</b>は、当社に代わってデータを処理する自然人または法人を意味します。これは、サービスを容易にするために当社によって雇用された第三者の会社または個人、会社を代表してサービスを提供する、サービスに関連するサービスを実行する、またはサービスの使用方法を分析するために当社を支援することを指します。</p>
+        <p class="t"><b>「第三者のソーシャルメディアサービス」</b>は、ユーザーがログインするか、サービスを利用するためのアカウントを作成することができる、任意のウェブサイトまたはソーシャルネットワークウェブサイトを指します。</p>
+        <p class="t"><b>「利用データ」</b>は、サービスの利用によって自動的に収集されたデータ、またはサービスのインフラ自体から（例えば、ページ訪問の期間など）生成されたデータを指します。</p>
+        <p class="t"><b>「お客様」</b>は、サービスにアクセスし、または利用する個人、またはそのような個人がサービスをアクセスし、または利用するために代表する会社やその他の法的実体を意味します。</p>
+      </div>
+
+      <h2>お客様の個人データの収集と利用</h2>
+      <h3>収集されるデータの種類</h3>
+      <h3>個人データ</h3>
+      <p>当社のサービスを利用する際に、当社はお客様に連絡先情報または特定できる情報（以下「お客様の情報」といいます）を提供していただくようお願いする場合があります。個人を特定できる情報には、限定されませんが、以下が含まれる場合があります：</p>
+      <ul>
+        <li>メールアドレス</li>
+      </ul>
+      <h3>利用データ</h3>
+      <p>利用データは、サービスを利用する際に自動的に収集されます。</p>
+      <p>利用データには、お客様のデバイスのインターネットプロトコルアドレス（例：IPアドレス）、ブラウザの種類、ブラウザのバージョン、お客様が訪問した当社のサービスのページ、お客様の訪問の日時と日付、それらのページに費やした時間、ユニークなデバイス識別子およびその他の診断データなどの情報が含まれる場合があります。</p>
+      <p>モバイルデバイスを通じてサービスにアクセスする際には、使用しているモバイルデバイスの種類、モバイルデバイスのユニークID、モバイルデバイスのIPアドレス、モバイルオペレーティングシステム、使用しているモバイルインターネットブラウザの種類、ユニークなデバイス識別子およびその他の診断データなど、特定の情報を自動的に収集する場合があります。</p>
+      <p>また、お客様が当社のサービスを訪問するたび、またはモバイルデバイスを通じてサービスにアクセスする際に、お客様のブラウザが送信する情報も収集する場合があります。</p>
+      <h3>第三者のソーシャルメディアサービスからの情報</h3>
+      <p>当社は、Google、Facebook、Instagram、X、等の第三者のソーシャルメディアサービスを通じてアカウントを作成し、ログインしてサービスを利用することをお客様に許可しています。</p>
+      <p>第三者のソーシャルメディアサービスを通じて登録するか、または当社にアクセスを許可することを決定した場合、当社はお客様の第三者のソーシャルメディアサービスのアカウントに既に関連付けられている個人データ（お客様の名前、メールアドレス、アクティビティ、またはそのアカウントに関連付けられている連絡先リストなど）を収集することがあります。</p>
+      <p>お客様は、第三者のソーシャルメディアサービスのアカウントを通じて当社と追加の情報を共有するオプションを持つ場合があります。登録時またはその他の場合にそのような情報および個人データを提供することを選択した場合、お客様は当社がこのプライバシーポリシーに従ってその情報を使用、共有、および保存することを許可するものとします。</p>
+
+      <h3>お客様の個人データの使用</h3>
+      <p>当社は、次の目的で個人データを使用する場合があります：</p>
+      <ul>
+        <li><b>サービスの提供および維持：</b>サービスの利用の監視を含みます。</li>
+        <li><b>お客様のアカウントの管理：</b>サービスのユーザーとしてのお客様の登録を管理するため。お客様が提供する個人データは、登録ユーザーとしてお客様に利用可能なサービスの異なる機能にアクセスすることを可能にします。</li>
+        <li><b>契約の実行：</b>お客様がサービスを通じて購入した製品、アイテム、またはサービスの購入契約の開発、遵守、および履行、または当社とのその他の契約のため。</li>
+        <li><b>お客様に連絡する：</b>セキュリティ更新など、機能、製品、または契約したサービスに関連する更新や情報通信について、電子メール、電話、SMS、またはモバイルアプリケーションのプッシュ通知など、他の同等の電子通信形式でお客様に連絡するため。</li>
+        <li><b>お客様にニュースを提供する：</b>お客様がすでに購入または問い合わせたものと同様の他の商品、サービス、イベントに関するニュース、特別オファー、一般情報を提供するため、お客様がそのような情報を受け取ることを選択していない場合を除きます。</li>
+        <li><b>お客様のリクエストの管理：</b>お客様からのリクエストに対応し、管理するため。</li>
+        <li><b>ビジネス移転の場合：</b>合併、売却、再構築、再編、解散、またはサービスユーザーに関する当社が保有する個人データを含む当社の資産の一部または全部の売却または譲渡に関連するその他の取引の評価または実施のために、お客様の情報を使用する場合があります。</li>
+        <li><b>その他の目的：</b>データ分析、利用動向の特定、プロモーションキャンペーンの効果の決定、および当社のサービス、製品、サービス、マーケティング、およびお客様の経験の評価および改善など、他の目的でお客様の情報を使用する場合があります。</li>
+      </ul>
+      <p>次の状況で、お客様の個人情報を共有する場合があります：</p>
+      <ul>
+        <li><b>サービスプロバイダーへの共有：</b>サービスの利用の監視および分析、お客様への連絡のために、お客様の個人情報をサービスプロバイダーと共有する場合があります。</li>
+        <li><b>ビジネス移転の場合：</b>会社資産の売却、融資、または当社の事業の一部または全部の別の会社への譲渡または取得の交渉中または接続中に、お客様の個人情報を共有または譲渡する場合があります。</li>
+        <li><b>関連会社への共有：</b>当社の関連会社とお客様の情報を共有する場合があります。その場合、これらの関連会社は、このプライバシーポリシーを遵守することが求められます。関連会社には、当社の親会社およびその他の子会社、合弁会社、または当社がコントロールするまたは共通のコントロール下にある他の会社が含まれます。</li>
+        <li><b>ビジネスパートナーへの共有：</b>お客様に特定の製品、サービス、またはプロモーションを提供するために、当社のビジネスパートナーとお客様の情報を共有する場合があります。また当社サービスを円滑に提供するために、当社が個人情報取扱業務を第三者に委託し、または個人情報取り扱い業務につき第三者と業務提携する場合は、それらの業務委託先または業務提携先に対して必要な範囲でお客様の情報を開示して共有する場合があります。</li>
+        <li><b>他のユーザーへの共有：</b>お客様が個人情報を共有するか、他のユーザーと公共エリアで相互作用する場合、その情報はすべてのユーザーによって閲覧され、外部で公開的に配布される可能性があります。第三者のソーシャルメディアサービスを通じて他のユーザーと相互作用するか、登録する場合、お客様の連絡先はお客様の名前、プロフィール、写真、および活動の説明を見ることができます。同様に、他のユーザーはお客様の活動の説明を閲覧し、お客様と通信し、お客様のプロフィールを表示することができます。</li>
+        <li><b>お客様の同意のもとでの共有：</b>お客様の同意を得て、他の目的のためにお客様の個人情報を開示する場合があります。</li>
+      </ul>
+
+      <h2>お客様の個人データの保持</h2>
+      <p>当社は、本プライバシーポリシーに記載された目的のために必要な期間、お客様の個人データを保持します。当社は、法的義務を遵守するため（例えば、適用される法律に従ってデータを保持する必要がある場合）、紛争を解決し、法的協定およびポリシーを実施するために必要な範囲で、お客様の個人データを保持および使用します。</p>
+      <p>当社はまた、内部分析目的のために利用データを保持します。利用データは通常、より短い期間保持されますが、このデータがセキュリティを強化するため、または当社のサービスの機能を改善するために使用される場合、または法的にこのデータをより長い期間保持する義務がある場合を除きます。</p>
+
+      <h2>お客様の個人データの転送</h2>
+      <p>お客様の情報（個人データを含む）は当社の運営オフィスおよび処理に関与する当事者が位置するその他の場所で処理されます。これは、この情報がお客様の県、国、またはその他の政府管轄区域外のコンピュータに転送されて保持されることを意味します。そこでは、データ保護法がお客様の管轄区域のものと異なる場合があります。</p>
+      <p>このプライバシーポリシーに同意し、そのような情報を提出することは、その転送に対するお客様の同意を表します。</p>
+      <p>当社は、お客様のデータが安全に扱われ、このプライバシーポリシーに従って処理されるように、必要なすべての手順を講じます。お客様の個人データの転送は、お客様のデータおよびその他の個人情報のセキュリティを含む適切な管理が整った組織または国にのみ行われます。</p>
+
+      <h2>お客様の個人データの削除</h2>
+      <p>お客様は、当社がお客様について収集した個人データを削除する、または削除を支援するよう当社に要請する権利を有します。</p>
+      <p>当社のサービスは、お客様がサービス内から特定の情報を削除する機能を提供する場合があります。</p>
+      <p>お客様は、アカウントをお持ちの場合はいつでもアカウントにサインインして、個人情報を管理できるアカウント設定セクションを訪問することにより、お客様の情報を更新、修正、または削除することができます。また、当社に連絡して、お客様が当社に提供した個人情報にアクセスし、修正し、または削除するよう要請することもできます。</p>
+      <p>ただし、法的義務がある場合や合法的根拠を持って保持する必要がある場合には、特定の情報を保持する必要があることにご注意ください。</p>
+
+      <h2>お客様の個人データの開示</h2>
+      <h3>ビジネス取引</h3>
+      <p>当社が合併、買収、資産売却に関与する場合、お客様の個人データは転送される可能性があります。お客様の個人データが異なるプライバシーポリシーの対象となり、転送される前に通知を提供します。</p>
+      <h3>法執行機関</h3>
+      <p>特定の状況下で、当社は法律によって要求された場合、または公的機関（例えば、裁判所または政府機関）による有効な要求に応じて、お客様の個人データを開示する必要がある場合があります。</p>
+      <h3>その他の法的要件</h3>
+      <p>当社は、以下の行動が必要であると誠実に信じる場合、お客様の個人データを開示する場合があります：</p>
+      <ul>
+        <li>法的義務を遵守するため</li>
+        <li>当社の権利または財産を保護し、擁護するため</li>
+        <li>サービスに関連する可能性のある不正行為を防止または調査するため</li>
+        <li>サービスのユーザーまたは公衆の個人の安全を保護するため</li>
+        <li>法的責任から保護するため</li>
+      </ul>
+
+      <h2>お客様の個人データのセキュリティ</h2>
+      <p>お客様の個人データのセキュリティは当社にとって重要ですが、インターネット上の伝送方法や電子的な保存方法は100％安全ではないことを覚えておいてください。当社は、お客様の個人データを保護するために商業的に受け入れられる手段を使用するよう努めていますが、その絶対的な安全を保証することはできません。</p>
+
+      <h2>AI/ML モデルの開発・学習のためのデータ利用について</h2>
+      <p>当社は、OpsGuide および 外部連携サービスを通じて取得したユーザーデータを、汎用的な AI または機械学習モデル（以下「AI/ML モデル」）の学習目的で利用することはありません。</p>
+      <p>ただし、当社のサービス機能を提供し、サービスを改善するために必要な範囲で、以下のようにデータを利用する場合があります。</p>
+      <ul>
+        <li><b>サービスの機能提供・分析：</b>当社は個々のユーザーが利用する機能やエラー情報を記録し、サービス品質の向上を目的として利用する場合があります。</li>
+        <li><b>匿名化・集計化されたデータの活用：</b>当社は、ユーザー個人を特定できない形式（匿名化または集計化）で、サービスの利用状況分析を行う場合があります。このデータはモデルの改善や新機能開発のために活用される場合がありますが、特定個人を識別する目的では利用いたしません。</li>
+      </ul>
+      <p>上記の目的以外に、お客様の事前の明示的な同意なしに、お客様の個人データを AI/ML モデルの学習や汎用的なアルゴリズム開発に利用することはありません。</p>
+      <h3>オプトアウト（拒否）の方法について</h3>
+      <p>当社の AI/ML に関するデータ利用（匿名化されていない形での利用）が将来発生する場合には、ユーザーが明示的に同意または拒否を選択できる手続きを用意し、プライバシーポリシー上で通知いたします。</p>
+
+      <h2>子供のプライバシー</h2>
+      <p>当社のサービスは13歳未満の方を対象としていません。当社は意図的に13歳未満の方から個人を特定できる情報を収集しません。お客様が保護者または後見人であり、お子様が当社に個人データを提供したことを知っている場合は、当社にご連絡ください。当社が13歳未満の方から親の同意を得ずに個人データを収集したことを知った場合、当社はその情報を当社のサーバーから削除する措置を講じます。</p>
+      <p>お客様の情報を処理するために同意を必要とし、お客様の国が親の同意を必要とする場合、当社はその情報を収集および使用する前に、お客様の親の同意を要求する場合があります。</p>
+
+      <h2>他のウェブサイトへのリンク</h2>
+      <p>当社のサービスには、当社が運営していない他のウェブサイトへのリンクが含まれている場合があります。第三者のリンクをクリックすると、その第三者のサイトに移動します。当社は、訪問するすべてのサイトのプライバシーポリシーを確認することを強くお勧めします。</p>
+      <p>当社は、第三者のサイトやサービスのコンテンツ、プライバシーポリシー、または慣行に対して一切の責任を負いません。</p>
+
+      <h2>お客様の情報の管理体制</h2>
+      <p>当社は、お客様の情報を大切に保護することを当社の重要な社会的使命と認識し、役員はじめ全従業員が当社のすべての事業で取り扱う個人情報および当社従業員等の個人情報に関して、個人情報保護に関する法規範を遵守するため個人情報保護マネジメントシステムを構築して適切に運用し、常に社会的要請の変化に着目しつつ個人情報保護マネジメントシステムの継続的改善に全社を挙げて取り組むことを宣言致します。</p>
+      <ul>
+        <li>個人情報保護の重要性を強く認識し、当社の事業活動を遂行するために必要な範囲内で利用目的を明確に定め適切に個人情報の取得、利用および提供をおこないます。取得した個人情報は利用目的の範囲内でのみ利用し、目的外利用を行わないための措置を講じます。</li>
+        <li>前項の措置により取得した当社の事後活動で取り扱う個人情報および当社従業者等から取得した個人情報の取扱いの全部または一部を委託する場合、および個人情報を第三者に提供する場合には、十分な個人情報の保護水準を満たした事業者を選定し、契約等により適切な措置を講じます。</li>
+        <li>安心して個人情報をご提供いただけるように、個人情報の漏えい、滅失またはき損等の危険に対して、合理的な安全対策および予防・是正措置を講じます。</li>
+        <li>大切な個人情報をお預かりする企業として、個人情報保護の取扱いに関する法令、個人情報保護法に基づいて各所管官庁が作成したガイドライン・指針をはじめとするその他の規範を遵守します。</li>
+        <li>個人情報を適切に利用し、またその保護を徹底するために個人情報保護マネジメントシステムの継続的な見直しおよび改善を行います。</li>
+        <li>弊社の個人情報の取扱いに関する苦情および相談等があった場合には、下記のお問い合わせ先にて、迅速かつ適切な対応をいたします。</li>
+      </ul>
+      <p>当社は、全ての当社の役員及び従業員に対して、本プライバシーポリシーを遵守させます。また本プライバシーポリシーを遵守するために、必要かつ適切な教育及び監督を適宜行います。</p>
+
+      <h2>このプライバシーポリシーの変更</h2>
+      <p>当社は、本プライバシーポリシーを更新することがあります。変更を行った場合、このページに新しいプライバシーポリシーを掲載し、変更が有効になる前に電子メールおよび/または当社のサービス上で目立つ通知を通じてお知らせし、このプライバシーポリシーの「最終更新日」を更新します。</p>
+      <p>定期的にこのプライバシーポリシーを確認し、変更があったかどうかを確認することをお勧めします。このページに掲載されたプライバシーポリシーの変更は、掲載された時点で有効になります。</p>
+
+      <h2>お問い合わせ</h2>
+      <p>このプライバシーポリシーに関してご質問がある場合は、次の方法でお問い合わせいただけます。</p>
+      <ul>
+        <li>メールでのお問い合わせ：<a class="inline" href="mailto:sales@portament.jp">sales@portament.jp</a></li>
+        <li>お問い合わせフォーム：<a class="inline" href="index.html#contact">こちら</a></li>
+      </ul>
+
+      <div class="note">当社は、ISO/IEC 27001（ISMS）認証をDQSより取得しています。</div>
+    </div>
+  </section>
+
+  <footer class="site">
+    <div class="foot-inner">
+      <div class="foot-iso"><img class="iso-logo" src="assets/logo-isms.png" alt="ISMS-AC / DQS ISO/IEC 27001 認証">当社は、ISO/IEC 27001（ISMS）認証をDQSより取得しています。</div>
+      <nav class="foot-nav">
+        <a href="index.html#business">Business</a>
+        <a href="index.html#services">Service</a>
+        <a href="index.html#company">Company</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="privacy-policy.html">プライバシーポリシー</a>
+        <a href="security-policy.html">情報セキュリティ方針</a>
+      </nav>
+    </div>
+    <div class="foot-copy">© 2026 PORTAMENT, inc. All Rights Reserved.</div>
+  </footer>
+</div>
+
+<script>
+  const hd = document.querySelector('header');
+  addEventListener('scroll', () => hd.classList.toggle('scrolled', scrollY > 40), { passive: true });
+</script>
+</body>
+</html>

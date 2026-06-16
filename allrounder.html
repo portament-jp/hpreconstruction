@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALLROUNDER（プロフェッショナルによる事業支援） — 株式会社PORTAMENT</title>
+<meta name="description" content="ハイスキルなフリーランスのコンサルタント・エンジニアを、クライアントの課題に合わせてオーダーメイドでご提供する、ハンズオン型の事業支援サービスです。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* ============ サービス詳細ページ（元 test-site 構成に準拠） ============ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink: #18171a; --gray: #61687a; --line: rgba(16,18,22,.08); --paper: #ffffff;
+    --red: #f04f32; --amber: #e7bb29; --lime: #c6e44d; --teal: #19b7aa; --cyan: #0daecc; --blue: #1840cf;
+    --ease: cubic-bezier(.23, 1, .32, 1);
+    --font-body: 'IBM Plex Sans JP', sans-serif;
+    --sp-3: clamp(84px, 12vh, 140px);
+    /* ブランド色（ALLROUNDER = スレート系） */
+    --brand: #5c6470; --brand-deep: #3a414c;
+    --brand-hero: linear-gradient(105deg, #3a414c 0%, #5c6470 52%, #c4c9d1 100%);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Zen Kaku Gothic New', sans-serif; color: var(--ink);
+    background: #eceef1; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- ヘッダー（浮遊ピル・サイト共通） ---- */
+  header {
+    position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 50;
+    display: flex; align-items: center; gap: clamp(14px, 3vw, 34px);
+    padding: 10px 14px 10px 22px; border-radius: 999px;
+    background: rgba(247,248,249,.78); backdrop-filter: blur(16px) saturate(1.3);
+    border: 1px solid rgba(20,22,26,.08); box-shadow: 0 10px 36px rgba(20,22,26,.10);
+    width: max-content; max-width: calc(100vw - 32px); transition: box-shadow .4s;
+  }
+  header.scrolled { box-shadow: 0 14px 44px rgba(20,22,26,.14); }
+  .brand img { height: 40px; display: block; }
+  nav { display: flex; align-items: center; gap: clamp(12px, 2vw, 26px); }
+  nav a {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+    letter-spacing: .03em; color: var(--ink); text-decoration: none; position: relative;
+  }
+  nav a:not(.cta)::after {
+    content: ''; position: absolute; left: 50%; bottom: -7px; width: 4px; height: 4px; border-radius: 50%;
+    transform: translateX(-50%) scale(0); transition: transform .3s var(--ease);
+  }
+  nav a:nth-child(1)::after { background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+  nav a:nth-child(2)::after { background: linear-gradient(90deg, var(--teal), var(--lime)); }
+  nav a:nth-child(3)::after { background: linear-gradient(90deg, var(--red), var(--amber)); }
+  nav a:not(.cta):hover::after { transform: translateX(-50%) scale(1); }
+  nav a.cta {
+    font-weight: 700; font-size: 13px; color: #fff; padding: 9px 20px; border-radius: 999px;
+    background: var(--ink); overflow: hidden; isolation: isolate; transition: transform .25s, box-shadow .25s;
+  }
+  nav a.cta:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(20,22,26,.3); }
+  nav a.cta span { position: relative; z-index: 1; }
+  nav a.cta::before {
+    content: ''; position: absolute; inset: 0; z-index: 0;
+    background: linear-gradient(120deg, var(--blue), var(--cyan));
+    transform: translateY(101%); transition: transform .45s var(--ease);
+  }
+  nav a.cta:hover::before { transform: translateY(0); }
+  @media (max-width: 720px) { nav a:not(.cta) { display: none; } }
+
+  /* ---- 背景（白基調・サービス本文側） ---- */
+  #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: #f4f5f7; }
+  .wrap { position: relative; z-index: 2; }
+
+  /* ---- 共通セクション ---- */
+  section { padding: var(--sp-3) clamp(20px, 5vw, 64px); position: relative; }
+  .inner { max-width: 1100px; margin: 0 auto; }
+  .rv { opacity: 0; transform: translateY(28px); transition: opacity .9s ease var(--d, 0s), transform .9s var(--ease) var(--d, 0s); }
+  .rv.on { opacity: 1; transform: none; }
+  .sec-h { font-size: clamp(24px, 3.6vw, 38px); font-weight: 900; letter-spacing: .02em; font-feature-settings: "palt"; }
+  .sec-lede { margin-top: 16px; color: var(--gray); font-size: 15px; font-family: var(--font-body); line-height: 2; max-width: 46em; }
+  .lead-h { font-size: clamp(19px, 2.6vw, 28px); font-weight: 700; line-height: 1.6; letter-spacing: .01em; font-feature-settings: "palt"; }
+
+  /* ---- ブランド色ヒーロー（中央・元ページ準拠） ---- */
+  .svc-hero {
+    background: var(--brand-hero);
+    padding: clamp(150px,19vh,220px) clamp(20px,5vw,64px) clamp(64px,10vh,110px);
+    position: relative; overflow: hidden;
+  }
+  .svc-hero .inner { max-width: 1100px; display: grid; grid-template-columns: 1.25fr .75fr; align-items: center; gap: clamp(24px,4vw,56px); }
+  .hero-label { font-family: var(--font-body); font-size: clamp(13px,1.5vw,16px); letter-spacing: .12em; color: #fff; opacity: .92; }
+  .hero-name { margin-top: clamp(10px,1.6vh,18px); font-family: 'Inter', sans-serif; font-weight: 400; font-size: clamp(40px,6.4vw,82px); line-height: 1.04; color: #fff; letter-spacing: .005em; }
+  .hero-rule { margin-top: clamp(20px,2.6vh,30px); width: min(620px,94%); height: 1px; background: #fff; opacity: .55; }
+  .hero-logo img { display: block; width: min(560px,90%); height: auto; filter: brightness(0) invert(1) drop-shadow(0 4px 14px rgba(0,0,0,.28)); }
+  @media (max-width: 760px) {
+    .svc-hero .inner { grid-template-columns: 1fr; text-align: center; gap: 26px; }
+    .hero-rule { margin-left: auto; margin-right: auto; }
+  }
+
+  /* ---- 図・フロー画像 ---- */
+  .diagram { margin-top: clamp(32px,5.5vh,52px); width: 100%; border: 1px solid var(--line); border-radius: 14px; background: #fff; padding: clamp(16px,2.6vw,34px); }
+  .diagram img { display: block; width: 100%; height: auto; }
+  .diagram.ph { border: 1.5px dashed rgba(16,18,22,.22); background: #fbfbfc; display: flex; align-items: center; justify-content: center; min-height: 170px; text-align: center; }
+  .diagram.ph .ph-note { color: #9aa0ab; font-family: var(--font-body); font-size: 13px; line-height: 1.9; max-width: 42em; }
+
+  /* ---- 御支援対象テーブル ---- */
+  .support-table { margin-top: clamp(40px,6vh,60px); display: grid; gap: 14px; }
+  .support-row { display: grid; grid-template-columns: minmax(110px,.22fr) 1fr; background: #eef1f8; border-radius: 12px; overflow: hidden; }
+  .support-row .sk { background: #dfe5f2; padding: clamp(16px,2.4vh,22px) clamp(14px,1.8vw,22px); font-weight: 700; font-size: 14px; display: flex; align-items: center; }
+  .support-row .sv { padding: clamp(15px,2.2vh,20px) clamp(18px,2.4vw,28px); display: flex; flex-wrap: wrap; gap: 10px 36px; align-items: center; font-family: var(--font-body); font-size: 14px; }
+  .support-row .sv > span { white-space: nowrap; }
+  .area-grid { list-style: none; display: grid; grid-template-columns: repeat(4,1fr); gap: 10px 24px; width: 100%; }
+  .area-grid li { position: relative; padding-left: 16px; font-family: var(--font-body); font-size: 13.5px; }
+  .area-grid li::before { content: ''; position: absolute; left: 2px; top: .62em; width: 5px; height: 5px; border-radius: 50%; background: var(--brand); }
+  @media (max-width: 680px) { .support-row { grid-template-columns: 1fr; } .area-grid { grid-template-columns: 1fr 1fr; } }
+
+  /* ---- ALLROUNDERの強み（濃紺セクション） ---- */
+  .strength { background: #1f2a4d; }
+  .strength .sec-h { color: #fff; }
+  .strength .sec-lede { color: rgba(255,255,255,.82); max-width: 60em; }
+  .str-list { margin-top: clamp(40px,6vh,60px); display: grid; gap: clamp(10px,1.5vh,16px); }
+  .str-item { display: grid; grid-template-columns: minmax(150px,.26fr) 1fr; gap: clamp(20px,3vw,44px); padding: clamp(22px,3vh,30px) 0; border-top: 1px solid rgba(255,255,255,.16); align-items: start; }
+  .str-item:first-child { border-top: none; }
+  .str-card { background: #fff; color: var(--brand-deep); border-radius: 12px; padding: clamp(20px,2.6vh,28px) 16px; font-weight: 700; font-size: 15px; line-height: 1.5; text-align: center; display: flex; align-items: center; justify-content: center; min-height: 96px; }
+  .str-pts { list-style: none; display: grid; gap: 14px; padding-top: 4px; }
+  .str-pts li { font-family: var(--font-body); font-size: 13.5px; line-height: 1.95; color: rgba(255,255,255,.92); position: relative; padding-left: 18px; }
+  .str-pts li::before { content: ''; position: absolute; left: 0; top: .72em; width: 7px; height: 7px; border-radius: 50%; background: #7d93d6; }
+  .str-pts li.note { color: rgba(255,255,255,.62); font-size: 12.5px; padding-left: 0; }
+  .str-pts li.note::before { display: none; }
+  @media (max-width: 680px) { .str-item { grid-template-columns: 1fr; gap: 14px; } .str-card { min-height: 0; padding: 16px; } }
+
+  /* ---- 他社との比較表 ---- */
+  .compare-table { margin-top: clamp(40px,6vh,60px); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .compare-grid { min-width: 820px; display: grid; grid-template-columns: minmax(86px,.46fr) 1fr 1fr 1fr; border-top: 1px solid var(--line); border-left: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .compare-grid > div { padding: clamp(15px,1.6vw,20px); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .ch-corner { background: #eef1f8; }
+  .ch-head { background: #eef1f8; font-weight: 700; font-size: 13px; text-align: center; display: flex; align-items: center; justify-content: center; font-feature-settings: "palt"; }
+  .ch-head.me { background: var(--brand-deep); color: #fff; }
+  .ch-rowlabel { background: #eef1f8; font-weight: 700; font-size: 13.5px; display: flex; align-items: center; justify-content: center; text-align: center; }
+  .ch-cell .cct { font-weight: 700; font-size: 13.5px; line-height: 1.5; font-feature-settings: "palt"; }
+  .ch-cell .ccd { margin-top: 9px; font-family: var(--font-body); font-size: 12px; line-height: 1.8; color: var(--gray); }
+  .ch-cell.me { background: rgba(58,65,76,.05); }
+  .ch-cell.me .cct { color: var(--brand-deep); }
+
+  /* ---- お問い合わせフォーム ---- */
+  .contact-grid { margin-top: clamp(40px,7vh,64px); max-width: 720px; }
+  .field { margin-bottom: clamp(24px,4vh,34px); }
+  .field label { display: block; font-family: var(--font-body); font-size: 12.5px; letter-spacing:.05em; color: #8a91a0; margin-bottom: 10px; }
+  .field input, .field textarea { width: 100%; font-family: var(--font-body); font-size: 15px; color: var(--ink); background: transparent; border: none; border-bottom: 1px solid rgba(16,18,22,.22); padding: 8px 2px; outline: none; transition: border-color .3s; }
+  .field textarea { resize: vertical; min-height: 120px; line-height: 1.8; }
+  .field input:focus, .field textarea:focus { border-color: var(--brand); }
+  .submit { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; color: #fff; background: var(--ink); border: none; cursor: pointer; padding: 15px 40px; border-radius: 999px; letter-spacing:.04em; position: relative; overflow: hidden; isolation: isolate; transition: transform .25s, box-shadow .25s; }
+  .submit:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(20,22,26,.28); }
+  .submit span { position: relative; z-index: 1; }
+  .submit::before { content:''; position:absolute; inset:0; z-index:0; background: linear-gradient(120deg,var(--brand),var(--brand-deep)); transform: translateY(101%); transition: transform .45s var(--ease); }
+  .submit:hover::before { transform: translateY(0); }
+  .form-done { display: none; font-size: clamp(16px,2.2vw,20px); line-height: 2; font-feature-settings:"palt"; }
+  .form-done.show { display: block; }
+  .mail-note { margin-top: clamp(28px,4vh,40px); font-family: var(--font-body); font-size: 13px; color: var(--gray); }
+  .mail-note a { color: var(--brand-deep); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+
+  /* ---- フッター ---- */
+  footer.site { position: relative; z-index: 2; border-top: 1px solid var(--line); padding: clamp(48px,7vh,80px) clamp(20px,5vw,64px) clamp(36px,5vh,56px); background:#f4f5f7; }
+  .foot-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; align-items: flex-start; }
+  .foot-iso { font-family: var(--font-body); font-size: 12.5px; line-height: 2; color: var(--gray); max-width: 32em; }
+  .iso-logo { height: 56px; width: auto; display: block; margin-bottom: 14px; }
+  .foot-nav { display: flex; gap: clamp(16px,2.4vw,30px); flex-wrap: wrap; }
+  .foot-nav a { font-family:'Inter',sans-serif; font-size: 13px; font-weight: 500; letter-spacing:.03em; color: var(--ink); text-decoration: none; transition: color .3s; }
+  .foot-nav a:hover { color: var(--gray); }
+  .foot-copy { width: 100%; margin-top: clamp(28px,4vh,40px); padding-top: 20px; border-top: 1px solid var(--line); font-family:'Inter',sans-serif; font-size: 11.5px; letter-spacing:.06em; color: #9aa0ab; }
+
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<div id="bg" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header>
+    <a class="brand" href="index.html"><img src="assets/logo-main.png" alt="PORTAMENT"></a>
+    <nav>
+      <a href="index.html#business">Business</a><a href="index.html#services">Service</a><a href="index.html#company">Company</a>
+      <a class="cta" href="index.html#contact"><span>Contact</span></a>
+    </nav>
+  </header>
+
+  <!-- ブランド色ヒーロー -->
+  <section class="svc-hero">
+    <div class="inner">
+      <div class="hero-text">
+        <p class="hero-label rv">プロフェッショナルによる事業支援</p>
+        <div class="hero-logo rv" style="--d:.08s;"><img src="assets/logo-allrounder.png" alt="ALLROUNDER"></div>
+        <div class="hero-rule rv" style="--d:.16s;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- サービス概要 -->
+  <section>
+    <div class="inner">
+      <h2 class="lead-h rv">ハイスキルなフリーランスのコンサルタント・エンジニアをハンズオン型でご提供</h2>
+      <p class="sec-lede rv" style="max-width:none;">ALLROUNDERは、クライアントの課題に合わせて、ハイスキルなフリーランスのコンサルタント／エンジニアをオーダーメイドで提供するサービスです。</p>
+      <!-- サービス概要の関係図（やや大きめ＋左右余白を足して端の文字を内側に寄せる・中央寄せ） -->
+      <div class="diagram rv" style="max-width:1050px;margin-left:auto;margin-right:auto;padding-left:clamp(66px,9vw,120px);padding-right:clamp(66px,9vw,120px);">
+        <img src="assets/allrounder-flow.png" alt="フリーランス市場 → 紹介・審査による選抜 → PORTAMENT → プロジェクトアサイン → クライアント">
+      </div>
+    </div>
+  </section>
+
+  <!-- 御支援対象 -->
+  <section>
+    <div class="inner">
+      <h2 class="sec-h rv">御支援対象</h2>
+      <p class="sec-lede rv">あらゆる規模の、あらゆる業種の企業様を御支援します。</p>
+      <div class="support-table rv">
+        <div class="support-row">
+          <div class="sk">業種</div>
+          <div class="sv"><span>全業種</span></div>
+        </div>
+        <div class="support-row">
+          <div class="sk">企業規模</div>
+          <div class="sv"><span>大企業</span><span>中小企業</span><span>スタートアップ</span></div>
+        </div>
+        <div class="support-row">
+          <div class="sk">業務領域</div>
+          <div class="sv">
+            <ul class="area-grid">
+              <li>IT PM/PMO</li><li>エンジニアリング</li><li>Webディレクション</li><li>データ分析</li>
+              <li>戦略</li><li>業務改善/改革</li><li>マーケティング</li><li>新規事業立ち上げ</li>
+            </ul>
+          </div>
+        </div>
+        <div class="support-row">
+          <div class="sk">レイヤー</div>
+          <div class="sv"><span>役員</span><span>管理職</span><span>リーダー</span><span>担当者</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALLROUNDERの強み（濃紺） -->
+  <section class="strength">
+    <div class="inner">
+      <h2 class="sec-h rv">ALLROUNDERの強み</h2>
+      <p class="sec-lede rv">弊社は独自の選別スキームで優秀な人財を選別・フォローすることでバリューを発揮し、かつクライアントの財務リスクを抑えることで実績をあげてきました。</p>
+      <div class="str-list">
+        <div class="str-item rv">
+          <div class="str-card">独自の<br>選別スキーム</div>
+          <ul class="str-pts">
+            <li>フリーランスの選別審査は、実際にプロジェクトで活躍しているPORTAMENT所属者2名以上が実施します。</li>
+            <li>書類審査、面接それぞれで「どういった稼働者が現場で評価されるか」体系的な知見があり、審査者間でシェアしております。</li>
+            <li>結果、稼働者の9割以上が延長希望を頂いております。</li>
+          </ul>
+        </div>
+        <div class="str-item rv">
+          <div class="str-card">稼働後のPJ<br>内部フォロー</div>
+          <ul class="str-pts">
+            <li>可能であればコンサルティングファーム出身のプロジェクト支援部隊がプロジェクトに事前参画(無料)し、稼働者のプロジェクト参画後のサポートをします。</li>
+            <li class="note">※一般に、稼働者にスキルがある前提で、稼働者がバリューを出せないケースの大半はコミュニケーションが原因であるため、上記フォローは高い効果がございます。</li>
+          </ul>
+        </div>
+        <div class="str-item rv">
+          <div class="str-card">財務リスクの<br>排除</div>
+          <ul class="str-pts">
+            <li>初回契約は完全ノーリスク。単月契約でバリューが出せなかった場合御請求しません。</li>
+            <li>契約体系は柔軟に設定可能です。クライアント規定に応じ、契約期間は短期〜長期まで設定可能です。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 他社との違い -->
+  <section>
+    <div class="inner">
+      <h2 class="sec-h rv">他人財紹介会社/ファームと弊社の違い</h2>
+      <p class="sec-lede rv">弊社は人財の質、稼働後対応、金額どの面でも、一般的な人財紹介会社やコンサルティングファームと比較して、納得感を追求したサービスを提供しております。</p>
+      <div class="compare-table rv">
+        <div class="compare-grid">
+          <div class="ch-corner"></div>
+          <div class="ch-head">一般的な人財紹介会社</div>
+          <div class="ch-head">一般的なコンサルティングファーム</div>
+          <div class="ch-head me">弊社</div>
+
+          <div class="ch-rowlabel">人財の質</div>
+          <div class="ch-cell"><p class="cct">紹介精度が粗い・見極め手段がない</p><p class="ccd">仲介業者は募集領域の業務経験が無いことが多く、経歴書のキーワードだけで人財を紹介。また、クライアントはバリューを出す人財を見極める知見がなく、かつ見極めの時間も不十分。（面接30分〜1時間のみ）</p></div>
+          <div class="ch-cell"><p class="cct">低品質人財を抱き合わせでチーム組成</p><p class="ccd">ファームはチームメンバー各々がワークするかどうかの目線で提案せず、マネージャーが品質を担保するため、ファームで抱える低品質人財や新人が抱き合わせでチーム組成される。（チームメンバーの質にムラがある）</p></div>
+          <div class="ch-cell me"><p class="cct">高品質なオーダーメイドチーム</p><p class="ccd">弊社所属者2名以上による選考で、優秀な人財の目線から見て実力ある人財を組み合わせて御提案、稼働者の品質を担保。御提案に際してもメンバー各々の経歴を詳細に紹介。</p></div>
+
+          <div class="ch-rowlabel">稼働後対応</div>
+          <div class="ch-cell"><p class="cct">稼働者への効果的なサポートがない</p><p class="ccd">仲介業者はプロジェクトの中に入り込むことがなく、サポートが全て「聞きづて」になる上、担当者が該当領域の業務経験を持たないことが多いため、効果的なサポートが難しい。</p></div>
+          <div class="ch-cell"><p class="cct">ほぼマネージャー単独で処理</p><p class="ccd">基本的にマネージャーが単独でメンバーの品質を担保するため、低品質人財がチームに含まれる場合マネージャー本来のバリューが発揮しにくい。社内ナレッジもファーム内の知見に限られ有限。</p></div>
+          <div class="ch-cell me"><p class="cct">専門部隊によるサポート</p><p class="ccd">コンサルティングファーム出身のプロジェクト支援部隊、同領域の経験を持つ弊社所属者（多方面のファーム出身者が在籍するため知見が幅広です）が資料作成等支援することで、稼働者に効果的なサポートを実施。</p></div>
+
+          <div class="ch-rowlabel">金額</div>
+          <div class="ch-cell"><p class="cct">言い値</p><p class="ccd">金額が実質言い値（30〜50万はスキルが同じでも提示金額次第で上/下振れ）で、そのギャップを仲介業者が取る構図になっており、フリーランスが受け取る金額と評価が直結していない。</p></div>
+          <div class="ch-cell"><p class="cct">非常に高額</p><p class="ccd">ファームの新人研修費用や、提案だけ行いほぼプロジェクトへ関与しない上層部への給与、ブランド料も請求額に含まれるため、非常に高額。実際稼働者（社員）に支払われる給与は、請求額の約1/3〜1/2。</p></div>
+          <div class="ch-cell me"><p class="cct">比較的低額</p><p class="ccd">御提案金額としては一般的なコンサルティングファームの3/4程度で、かつ稼働する人財に対しては手数料を一般的な人財紹介会社の約半額（15%程度）として設定。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- お問い合わせ -->
+  <section id="contact">
+    <div class="inner">
+      <h2 class="sec-h rv">お問い合わせ</h2>
+      <p class="sec-lede rv">サービスに関するご質問・ご相談はお気軽にどうぞ。</p>
+      <form class="contact-grid rv" id="contactForm" novalidate>
+        <div class="field"><label for="cf-name">お名前</label><input type="text" id="cf-name" name="name" autocomplete="name" required></div>
+        <div class="field"><label for="cf-email">メールアドレス</label><input type="email" id="cf-email" name="email" autocomplete="email" required></div>
+        <div class="field"><label for="cf-company">会社名</label><input type="text" id="cf-company" name="company" autocomplete="organization"></div>
+        <div class="field"><label for="cf-message">お問い合わせ内容</label><textarea id="cf-message" name="message" required></textarea></div>
+        <button type="submit" class="submit"><span>送信する</span></button>
+      </form>
+      <p class="form-done" id="formDone">お問い合わせありがとうございます。<br>担当者より2営業日以内にご連絡致します。</p>
+      <p class="mail-note rv">メールでのお問い合わせ：<a href="mailto:sales@portament.jp">sales@portament.jp</a></p>
+    </div>
+  </section>
+
+  <!-- フッター -->
+  <footer class="site">
+    <div class="foot-inner">
+      <div class="foot-iso"><img class="iso-logo" src="assets/logo-isms.png" alt="ISMS-AC / DQS ISO/IEC 27001 認証">当社は、ISO/IEC 27001（ISMS）認証をDQSより取得しています。</div>
+      <nav class="foot-nav">
+        <a href="index.html#business">Business</a>
+        <a href="index.html#services">Service</a>
+        <a href="index.html#company">Company</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="privacy-policy.html">プライバシーポリシー</a>
+        <a href="security-policy.html">情報セキュリティ方針</a>
+      </nav>
+    </div>
+    <div class="foot-copy">© 2026 PORTAMENT, inc. All Rights Reserved.</div>
+  </footer>
+</div>
+
+<script>
+  const hd = document.querySelector('header');
+  addEventListener('scroll', () => hd.classList.toggle('scrolled', scrollY > 40), { passive: true });
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
+  }), { threshold: .14 });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  const form = document.getElementById('contactForm');
+  if (form) form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    form.style.display = 'none';
+    const d = document.getElementById('formDone'); d.classList.add('show');
+    d.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+</script>
+</body>
+</html>
