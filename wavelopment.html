@@ -86,11 +86,13 @@
   .svc-hero .inner { max-width: 1100px; display: grid; grid-template-columns: 1.25fr .75fr; align-items: center; gap: clamp(24px,4vw,56px); }
   .hero-label { font-family: var(--font-body); font-size: clamp(13px,1.5vw,16px); letter-spacing: .12em; color: #fff; opacity: .92; }
   .hero-name { margin-top: clamp(10px,1.6vh,18px); font-family: 'Inter', sans-serif; font-weight: 400; font-size: clamp(40px,6.4vw,82px); line-height: 1.04; color: #fff; letter-spacing: .005em; }
-  .hero-rule { margin-top: clamp(18px,2.4vh,26px); width: min(420px,82%); height: 1px; background: #fff; opacity: .55; }
+  .hero-text { width: fit-content; }
+  .hero-rule { margin-top: clamp(18px,2.4vh,26px); width: 100%; height: 1px; background: #fff; opacity: .55; }
   .hero-icon { justify-self: center; }
   .hero-icon img { display: block; width: auto; max-height: clamp(150px,22vw,250px); max-width: 100%; filter: drop-shadow(0 10px 30px rgba(16,24,48,.18)); }
   @media (max-width: 760px) {
     .svc-hero .inner { grid-template-columns: 1fr; text-align: center; gap: 26px; }
+    .hero-text { margin-left: auto; margin-right: auto; }
     .hero-rule { margin-left: auto; margin-right: auto; }
     .hero-icon { order: -1; }
     .hero-icon img { margin: 0 auto; }
@@ -133,7 +135,7 @@
   @media (max-width:680px){ .wstr-row { grid-template-columns: 1fr; } }
 
   /* ---- 実績（イラスト＋テキストの横並び） ---- */
-  .cases { margin-top: clamp(40px,7vh,64px); display: grid; gap: clamp(18px,3vh,28px); }
+  .cases { margin-top: clamp(40px,7vh,64px); display: grid; gap: clamp(18px,3vh,28px); grid-auto-rows: 1fr; }
   .case-row { display: grid; grid-template-columns: clamp(132px,20%,208px) 1fr; gap: clamp(22px,4vw,48px); align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: clamp(18px,2.6vh,30px) clamp(20px,2.8vw,38px); transition: box-shadow .35s var(--ease), transform .35s var(--ease); }
   .case-row:hover { box-shadow: 0 18px 44px rgba(16,24,48,.09); transform: translateY(-3px); }
   .case-img img { display: block; width: 100%; height: auto; border-radius: 12px; }
@@ -214,7 +216,7 @@
   <section class="svc-hero">
     <div class="inner">
       <div class="hero-text">
-        <p class="hero-label rv">開発・人材の個別支援</p>
+        <p class="hero-label rv">プロフェッショナルによる事業支援</p>
         <h1 class="hero-name rv" style="--d:.08s;">WAVELOPMENT</h1>
         <div class="hero-rule rv" style="--d:.16s;"></div>
       </div>
@@ -225,20 +227,20 @@
   <!-- サービス概要 -->
   <section>
     <div class="inner">
-      <h2 class="sec-h rv">WAVELOPMENT（ウェベロップメント）とその強み</h2>
+      <h2 class="sec-h rv">WAVELOPMENTの仕組みと強み</h2>
       <p class="sec-lede rv" style="max-width:none;">WAVELOPMENTは、弊社開発部隊が格安・迅速・高品質に請負開発をリモートで実施するサービスです。<br>弊社プロダクトの構築で活躍した人員をアサインするため、高い品質が保証でき、一定の品質を保証します。</p>
       <div class="wstr">
         <div class="wstr-row rv">
           <div class="wl">格安</div>
           <div class="wb"><ul>
-            <li>弊社プロダクトを構築している直属のインドネシア部隊が構築を実施するため、日本人の単価の1/3〜1/2で構築が可能です。</li>
+            <li>弊社はプロダクトを自動開発する独自の仕組みを持っており、通常受託開発の1/3〜1/2単価で構築が可能です。</li>
+            <li>仕組みの紹介動画は<a href="https://www.youtube.com/watch?v=3lkAF08xLpU" target="_blank" rel="noopener" style="color:var(--brand);font-weight:700;">こちら</a></li>
           </ul></div>
         </div>
         <div class="wstr-row rv" style="--d:.06s;">
           <div class="wl">迅速・高品質</div>
           <div class="wb"><ul>
             <li>弊社プロダクトを構築している部隊からメンバーを選出するため、スピード・品質ともに高いレベルをご期待いただけます。</li>
-            <li>部隊は英語話者ですが、弊社人員が間に入りコミュニケーション／会議は日本語で可能です。また、チャット上のやりとりは、翻訳ツールを通して実施も可能なため、コミュニケーションは円滑に進めることが可能です。</li>
           </ul></div>
         </div>
         <div class="wstr-row rv" style="--d:.12s;">
