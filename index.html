@@ -31,7 +31,8 @@
     --sp-2: clamp(48px, 7vh, 84px);
     --sp-3: clamp(110px, 15vh, 180px);
   }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: auto; }
+  html.nav-smooth { scroll-behavior: smooth; }
   body {
     font-family: 'Zen Kaku Gothic New', sans-serif; color: var(--ink);
     background: #fff;
@@ -120,7 +121,7 @@
   /* ---- セクション共通 ---- */
   section { padding: var(--sp-3) clamp(20px, 5vw, 64px); position: relative; }
   .inner { max-width: 1100px; margin: 0 auto; }
-  .rv { opacity: 0; transform: translateY(28px); transition: opacity .9s ease var(--d, 0s), transform .9s var(--ease) var(--d, 0s); }
+  .rv { opacity: 0; transform: translateY(28px); transition: opacity .45s ease var(--d, 0s), transform .45s var(--ease) var(--d, 0s); }
   .rv.on { opacity: 1; transform: none; }
   .sec-h { font-size: clamp(28px, 4.6vw, 48px); font-weight: 900; letter-spacing: .02em; font-feature-settings: "palt"; }
   .sec-lede { margin-top: 14px; color: var(--ink); font-size: 14.5px; font-family: var(--font-body); line-height: 1.9; }
@@ -535,6 +536,23 @@
 
 <script>
   const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ===== 別ページ→#section の着地: 上からスクロールせず即表示。読み込み後にスムーズスクロールを有効化 ===== */
+  (() => {
+    const root = document.documentElement;
+    const enableSmooth = () => setTimeout(() => root.classList.add('nav-smooth'), 80);
+    if (location.hash) {
+      history.scrollRestoration = 'manual';
+      addEventListener('load', () => {
+        let t = null;
+        try { t = document.querySelector(location.hash); } catch (e) {}
+        if (t) t.scrollIntoView({ block: 'start' });
+        enableSmooth();
+      });
+    } else {
+      addEventListener('load', enableSmooth);
+    }
+  })();
 
   // ヘッダー: スクロールで磨りガラス化
   const hd = document.querySelector('header');
