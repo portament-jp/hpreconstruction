@@ -79,7 +79,7 @@
     transform: translateY(101%); transition: transform .45s var(--ease);
   }
   nav a.cta:hover::before { transform: translateY(0); }
-  @media (max-width: 720px) { nav a:not(.cta) { display: none; } }
+  @media (max-width: 720px) { nav:not(.foot-nav) a:not(.cta) { display: none; } }
 
   /* ---- 全頁を貫く流線（スクロール描画） ---- */
   #flowSvg { position: absolute; top: 0; left: 0; width: 100%; z-index: 1; pointer-events: none; opacity: .55; }
