@@ -82,7 +82,7 @@
   @media (max-width: 720px) { nav a:not(.cta) { display: none; } }
 
   /* ---- 全頁を貫く流線（スクロール描画） ---- */
-  #flowSvg { position: absolute; top: 0; left: 0; width: 100%; z-index: 1; pointer-events: none; opacity: .92; }
+  #flowSvg { position: absolute; top: 0; left: 0; width: 100%; z-index: 1; pointer-events: none; opacity: .55; }
   #flowSvg path { will-change: stroke-dashoffset; }
 
   /* ---- 点（動く背景の粒・c2 確定デザイン） ---- */
@@ -117,6 +117,10 @@
   .official-flow.on img { clip-path: inset(-3% 0% -3% 0); }
   .official-flow.flip { margin-left: -8%; }
   .official-flow.flip img { transform: scaleX(-1); }
+  @media (max-width: 720px) {
+    /* keep the decorative flow line within the viewport on mobile (no 940px overflow) */
+    .official-flow, .official-flow.flip { width: 100%; min-width: 0; margin-left: 0; }
+  }
 
   /* ---- セクション共通 ---- */
   section { padding: var(--sp-3) clamp(20px, 5vw, 64px); position: relative; }
@@ -401,7 +405,7 @@
       <div class="pillar rv" id="sec-cocreation">
         <h3 class="pillar-h">新規事業・サービスの共創</h3>
         <div class="svc">
-          <a class="svc-card" href="agentpartner.html">
+          <a class="svc-card" href="/agentpartner">
             <div class="svc-brand"><img src="assets/logo-agentpartner.png" alt="Agentpartner" style="height:168px;"></div>
             <p class="svc-desc">新規事業に必要なシステム（マッチングプラットフォームなど）を弊社が無償で構築し、利益をシェアするサービス。</p>
             <ul class="svc-pts">
@@ -410,7 +414,7 @@
               <li>無償対応の保守・追加開発も品質・スピードが一定保証</li>
             </ul>
           </a>
-          <a class="svc-card" href="agentmaker.html">
+          <a class="svc-card" href="/agentmaker">
             <div class="svc-brand"><img src="assets/logo-agentmaker.png" alt="Agentmaker" style="height:168px;"></div>
             <p class="svc-desc">パートナー企業が展開するSaaS等Webサービスに対して、弊社が無償でAIエージェント機能や自動化の機能を付加。既存顧客へオプション課金を実施し、利益をシェアするサービス。</p>
             <ul class="svc-pts">
@@ -450,7 +454,7 @@
       <div class="pillar rv" id="sec-support">
         <h3 class="pillar-h">プロフェッショナルによる事業支援</h3>
         <div class="svc">
-          <a class="svc-card" href="wavelopment.html">
+          <a class="svc-card" href="/wavelopment">
             <div class="svc-brand"><img src="assets/logo-wavelopment.png" alt="WAVELOPMENT" style="height:160px;"></div>
             <p class="svc-desc">独自の仕組を利用した最速・最安の受託開発サービス。</p>
             <ul class="svc-pts">
@@ -459,7 +463,7 @@
               <li>必要に応じてPM・PMO支援も可能</li>
             </ul>
           </a>
-          <a class="svc-card" href="allrounder.html">
+          <a class="svc-card" href="/allrounder">
             <div class="svc-brand"><img src="assets/logo-allrounder.png" alt="ALLROUNDER" style="height:70px;"></div>
             <p class="svc-desc">厳選したフリーランスによるあらゆるプロジェクトの支援サービス。</p>
             <ul class="svc-pts">
@@ -526,8 +530,8 @@
         <a href="#services">Service</a>
         <a href="#company">Company</a>
         <a href="#contact">Contact</a>
-        <a href="privacy-policy.html">プライバシーポリシー</a>
-        <a href="security-policy.html">情報セキュリティ方針</a>
+        <a href="/privacy-policy">プライバシーポリシー</a>
+        <a href="/security-policy">情報セキュリティ方針</a>
       </nav>
     </div>
     <div class="foot-copy">© 2026 PORTAMENT, inc. All Rights Reserved.</div>
@@ -574,6 +578,10 @@
 
   function buildPath() {
     const W = innerWidth;
+    // Collapse the flow SVG before measuring: it's absolutely positioned, so its
+    // own height feeds back into scrollHeight. Without this, repeated resize events
+    // (e.g. DevTools responsive mode) compound it and add empty space below the footer.
+    svg.setAttribute('height', 0);
     const H = document.documentElement.scrollHeight;
     svg.setAttribute('width', W);
     svg.setAttribute('height', H);
