@@ -79,7 +79,14 @@
     transform: translateY(101%); transition: transform .45s var(--ease);
   }
   nav a.cta:hover::before { transform: translateY(0); }
-  @media (max-width: 720px) { nav:not(.foot-nav) a:not(.cta) { display: none; } }
+  @media (max-width: 720px) {
+    /* mobile: keep the full header menu visible, just smaller so it fits the pill */
+    header { gap: 7px; padding: 6px 8px 6px 11px; }
+    .brand img { height: 24px; }
+    nav { gap: 9px; }
+    nav a { font-size: 11px; letter-spacing: 0; }
+    nav a.cta { padding: 6px 11px; font-size: 11px; }
+  }
 
   /* ---- 全頁を貫く流線（スクロール描画） ---- */
   #flowSvg { position: absolute; top: 0; left: 0; width: 100%; z-index: 1; pointer-events: none; opacity: .55; }

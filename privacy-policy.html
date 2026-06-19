@@ -42,7 +42,14 @@
   nav a.cta span { position: relative; z-index: 1; }
   nav a.cta::before { content: ''; position: absolute; inset: 0; z-index: 0; background: linear-gradient(120deg, var(--blue), var(--cyan)); transform: translateY(101%); transition: transform .45s var(--ease); }
   nav a.cta:hover::before { transform: translateY(0); }
-  @media (max-width: 720px) { nav:not(.foot-nav) a:not(.cta) { display: none; } }
+  @media (max-width: 720px) {
+    /* mobile: keep the full header menu visible, just smaller so it fits the pill */
+    header { gap: 7px; padding: 6px 8px 6px 11px; }
+    .brand img { height: 24px; }
+    nav { gap: 9px; }
+    nav a { font-size: 11px; letter-spacing: 0; }
+    nav a.cta { padding: 6px 11px; font-size: 11px; }
+  }
 
   /* ---- 法務ページ ---- */
   .legal-hero { padding: clamp(120px,16vh,180px) clamp(20px,5vw,64px) clamp(36px,5vh,56px); border-bottom: 1px solid var(--line); background: #fff; }
