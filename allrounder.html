@@ -146,6 +146,24 @@
   .ch-cell.me { background: rgba(58,65,76,.05); }
   .ch-cell.me .cct { color: var(--brand-deep); }
 
+  /* ---- 支援事例 ---- */
+  .cases { margin-top: clamp(40px,7vh,64px); display: grid; gap: clamp(18px,3vh,28px); }
+  .case-row { display: grid; grid-template-columns: clamp(132px,20%,208px) 1fr; gap: clamp(22px,4vw,48px); align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: clamp(18px,2.6vh,30px) clamp(20px,2.8vw,38px); transition: box-shadow .35s var(--ease), transform .35s var(--ease); }
+  .case-row:hover { box-shadow: 0 18px 44px rgba(16,24,48,.09); transform: translateY(-3px); }
+  .case-logo { display: flex; align-items: center; justify-content: center; }
+  .case-logo img { max-width: 100%; max-height: clamp(88px,12vw,128px); width: auto; height: auto; object-fit: contain; }
+  .case-org { margin-top: 14px; text-align: center; font-size: clamp(13.5px,1.4vw,15px); font-weight: 700; line-height: 1.7; color: var(--ink); font-feature-settings: "palt"; }
+  .case-title { font-size: clamp(16px,1.9vw,20px); font-weight: 700; font-feature-settings: "palt"; line-height: 1.5; }
+  .case-desc { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); font-family: var(--font-body); font-size: 13.5px; line-height: 1.95; color: var(--gray); }
+  .case-desc .case-sub { margin-top: 10px; font-weight: 600; color: var(--ink); }
+  .case-pts { list-style: none; margin-top: 8px; display: grid; gap: 6px; }
+  .case-pts > li { position: relative; padding-left: 16px; }
+  .case-pts > li::before { content: ''; position: absolute; left: 2px; top: .72em; width: 5px; height: 5px; border-radius: 50%; background: var(--brand); }
+  .case-pts ul { list-style: none; margin-top: 2px; }
+  .case-pts ul li { position: relative; padding-left: 16px; font-size: 12.5px; }
+  .case-pts ul li::before { content: ''; position: absolute; left: 2px; top: .78em; width: 7px; height: 1.5px; background: var(--brand); }
+  @media (max-width: 640px) { .case-row { grid-template-columns: 1fr; gap: 16px; } .case-logo { max-width: 220px; margin: 0 auto; } }
+
   /* ---- お問い合わせフォーム ---- */
   .contact-grid { margin-top: clamp(40px,7vh,64px); max-width: 720px; }
   .field { margin-bottom: clamp(24px,4vh,34px); }
@@ -301,6 +319,74 @@
           <div class="ch-cell"><p class="cct">言い値</p><p class="ccd">金額が実質言い値（30〜50万はスキルが同じでも提示金額次第で上/下振れ）で、そのギャップを仲介業者が取る構図になっており、フリーランスが受け取る金額と評価が直結していない。</p></div>
           <div class="ch-cell"><p class="cct">非常に高額</p><p class="ccd">ファームの新人研修費用や、提案だけ行いほぼプロジェクトへ関与しない上層部への給与、ブランド料も請求額に含まれるため、非常に高額。実際稼働者（社員）に支払われる給与は、請求額の約1/3〜1/2。</p></div>
           <div class="ch-cell me"><p class="cct">比較的低額</p><p class="ccd">御提案金額としては一般的なコンサルティングファームの3/4程度で、かつ稼働する人財に対しては手数料を一般的な人財紹介会社の約半額（15%程度）として設定。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 支援事例 -->
+  <section>
+    <div class="inner">
+      <h2 class="sec-h rv">支援事例</h2>
+      <p class="sec-lede rv">多数の大手上場企業様へのご支援実績がございます。</p>
+      <div class="cases">
+        <div class="case-row rv">
+          <div class="case-side">
+            <div class="case-logo"><img src="assets/cases/tv-asahi.png" alt="tv asahi service"></div>
+            <div class="case-org">株式会社テレビ朝日<br>サービス様</div>
+          </div>
+          <div class="case-body">
+            <div class="case-title">IT関連プロジェクト実行支援</div>
+            <div class="case-desc">約3年半にわたり、株式会社テレビ朝日様向けの新基幹システム構想策定支援、経費精算SaaS全社導入（約3000名規模）のリードおよびグループ展開支援等、様々なIT関連プロジェクトにて支援。</div>
+          </div>
+        </div>
+        <div class="case-row rv" style="--d:.07s;">
+          <div class="case-side">
+            <div class="case-logo"><img src="assets/cases/kachitas.png" alt="カチタス"></div>
+            <div class="case-org">株式会社カチタス様</div>
+          </div>
+          <div class="case-body">
+            <div class="case-title">DX関連プロジェクト実行支援</div>
+            <div class="case-desc">インフラ領域、IT関連のマーケティング領域において、全体像の設計から、全体最適に向けた移管やアップデートを支援。合わせて、複数部署に渡るプロジェクトの全体調整、課題管理等DX関連プロジェクトに関するマネジメント業務も支援。</div>
+          </div>
+        </div>
+        <div class="case-row rv" style="--d:.14s;">
+          <div class="case-side">
+            <div class="case-logo"><img src="assets/cases/food.png" alt="大手食品メーカーのイメージイラスト"></div>
+            <div class="case-org">プライム上場<br>大手食品メーカー様</div>
+          </div>
+          <div class="case-body">
+            <div class="case-title">DX推進戦略策定支援</div>
+            <div class="case-desc">消費財・小売業を得意とするトッププレイヤーの戦略コンサルタントをご提案、海外事業におけるDX推進戦略およびアプローチの策定（課題の洗い出し / 他社事例からの示唆をもとにした具体的な論点・アクションの策定）を支援。</div>
+          </div>
+        </div>
+        <div class="case-row rv" style="--d:.21s;">
+          <div class="case-side">
+            <div class="case-logo"><img src="assets/cases/gym.png" alt="大手フィットネス会社のイメージイラスト"></div>
+            <div class="case-org">大手フィットネス会社様</div>
+          </div>
+          <div class="case-body">
+            <div class="case-title">多領域に渡るプロジェクト実行支援</div>
+            <div class="case-desc">
+              新規事業立ち上げ、マーケティング、アプリ構築、基幹システムリプレース等、多種多様な10以上のプロジェクトにて幅広く支援。
+              <p class="case-sub">■御支援プロジェクト例</p>
+              <ul class="case-pts">
+                <li>新規事業立ち上げ支援
+                  <ul><li>複数サービスの設計・推進管理~運用全般の実行支援</li></ul>
+                </li>
+                <li>マーケティング施策設計・実行支援
+                  <ul><li>各指標分析調査と施策落とし込み、施策実行・管理体制の整備支援</li></ul>
+                </li>
+                <li>基幹システムリプレース支援
+                  <ul><li>会計、店舗等の領域における要件定義～運用までの支援</li></ul>
+                </li>
+                <li>アプリ構築支援
+                  <ul><li>プロジェクト管理、フロント／バックエンド／インフラ等のエンジニアリング</li></ul>
+                </li>
+                <li>事業／システム領域を横断した課題整理組織の立ち上げ支援</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
