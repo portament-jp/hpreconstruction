@@ -1,1 +1,5 @@
 .DS_Store
+
+backend/.build/
+backend/.origin-secret
+backend/.cloudfront-planned.json
