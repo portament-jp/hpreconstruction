@@ -8,8 +8,7 @@
 # Idempotent: safe to re-run. Each step checks for existing state first.
 #
 # REQUIRES CREDENTIALS WITH lambda:*, iam:*, ses:* ON ACCOUNT 396115588530.
-# The `opsguide` profile does NOT have these (ReadOnly + S3/CloudFront/Route53 only).
-# See backend/README.md.
+# The `opsguide` profile has these. See backend/README.md.
 #
 # Usage:
 #   ./backend/deploy-contact-backend.sh              # prompts before touching CloudFront
@@ -19,8 +18,18 @@
 set -euo pipefail
 
 # ─────────────────────────────── configuration ───────────────────────────────
-AWS_PROFILE="${AWS_PROFILE:-opsguide}"
-export AWS_PROFILE
+# Default to the local "opsguide" named profile for interactive/manual runs, but
+# don't force it when that profile doesn't exist (e.g. GitHub Actions, where
+# aws-actions/configure-aws-credentials@v4 exports ambient AWS_ACCESS_KEY_ID /
+# AWS_SECRET_ACCESS_KEY / AWS_SESSION_TOKEN env vars instead of a named profile —
+# setting AWS_PROFILE to a nonexistent profile makes every `aws` call fail with
+# "The config profile (opsguide) could not be found" before it even gets to try
+# those env credentials).
+if [[ -n "${AWS_PROFILE:-}" ]]; then
+  export AWS_PROFILE
+elif aws configure list-profiles 2>/dev/null | grep -qx opsguide; then
+  export AWS_PROFILE=opsguide
+fi
 
 ACCOUNT_ID="396115588530"
 REGION="us-east-1"              # SES already has production access here (50k/day)
@@ -71,7 +80,7 @@ done
 
 actual_account="$(aws sts get-caller-identity --query Account --output text)"
 [[ "$actual_account" == "$ACCOUNT_ID" ]] \
-  || die "profile '$AWS_PROFILE' is on account $actual_account, expected $ACCOUNT_ID"
+  || die "profile '${AWS_PROFILE:-<none — using ambient credentials>}' is on account $actual_account, expected $ACCOUNT_ID"
 ok "authenticated on $ACCOUNT_ID as $(aws sts get-caller-identity --query Arn --output text)"
 
 caller_arn="$(aws sts get-caller-identity --query Arn --output text)"

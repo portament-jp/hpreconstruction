@@ -1,0 +1,54 @@
+name: Deploy portament.jp
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Required for aws-actions/configure-aws-credentials to assume the deploy role
+# via GitHub's OIDC provider (no long-lived AWS keys stored in the repo).
+permissions:
+  id-token: write
+  contents: read
+
+# Fixed group name (not branch-scoped) so all runs against the single
+# production target serialize, even if main gets two quick pushes in a row.
+# A second run's `aws cloudfront update-distribution` would otherwise race
+# the first on the distribution ETag and fail with PreconditionFailed.
+# cancel-in-progress must stay false — cancelling mid-deploy would leave the
+# backend and/or static site in a half-deployed state.
+concurrency:
+  group: portament-jp-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy backend + static site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run contact form backend unit tests
+        run: node backend/contact/test.mjs
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::396115588530:role/portament-lp-deploy-github
+          aws-region: us-east-1
+
+      # Backend must deploy before the static site. The HTML now surfaces a
+      # visible error when /api/contact fails instead of silently showing the
+      # success message, so publishing the pages before the backend exists
+      # would replace a fake success with a real error on the live site.
+      - name: Deploy contact form backend
+        run: ./backend/deploy-contact-backend.sh --yes
+
+      - name: Deploy static site
+        run: ./deploy-site.sh
