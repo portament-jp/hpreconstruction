@@ -173,7 +173,10 @@ mkdir -p "$BUILD_DIR"
 cp "$SCRIPT_DIR/contact/index.mjs" "$SCRIPT_DIR/contact/validate.mjs" "$BUILD_DIR/"
 # The SDK is vendored rather than relying on the runtime's bundled copy, which
 # AWS documents as convenience-only and subject to change between runtime patches.
-(cd "$BUILD_DIR" && npm init -y >/dev/null 2>&1 \
+# `npm init -y` would derive the package name from the directory (".build") and
+# fail with "Invalid name", so the manifest is written directly.
+(cd "$BUILD_DIR" \
+  && printf '%s' '{"name":"portament-contact-form","version":"1.0.0","private":true}' > package.json \
   && npm install --omit=dev --no-audit --no-fund @aws-sdk/client-sesv2 >/dev/null 2>&1)
 (cd "$BUILD_DIR" && zip -qr function.zip . -x '*.DS_Store')
 ok "bundle: $(du -h "$BUILD_DIR/function.zip" | cut -f1)"
