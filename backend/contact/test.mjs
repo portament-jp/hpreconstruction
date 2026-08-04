@@ -3,7 +3,7 @@
  * No AWS calls — validate.mjs is pure.
  */
 import assert from 'node:assert/strict';
-import { validate, buildEmail, pickClientIp, LIMITS } from './validate.mjs';
+import { validate, buildEmail, pickClientIp, LIMITS, isMissingPage, isOriginRejected } from './validate.mjs';
 
 let passed = 0;
 const test = (label, fn) => {
@@ -144,6 +144,44 @@ test('pickClientIp falls back to sourceIp on junk or spoofed garbage', () => {
   assert.equal(pickClientIp('<script>alert(1)</script>, 1.2.3.4', '130.176.0.1'), '130.176.0.1');
   assert.equal(pickClientIp('999.1.1.1, 1.2.3.4', '130.176.0.1'), '130.176.0.1');
   assert.equal(pickClientIp('not an ip', '130.176.0.1'), '130.176.0.1');
+});
+
+test('isMissingPage flags a missing page field', () => {
+  assert.equal(isMissingPage(undefined), true);
+});
+
+test('isMissingPage flags a page that does not start with "/"', () => {
+  for (const page of ['https://evil.example', 'index.html', '', 'agentmaker']) {
+    assert.equal(isMissingPage(page), true, `expected ${JSON.stringify(page)} to be flagged`);
+  }
+});
+
+test('isMissingPage passes a well-formed path', () => {
+  for (const page of ['/', '/agentmaker', '/index.html']) {
+    assert.equal(isMissingPage(page), false, `expected ${JSON.stringify(page)} to pass`);
+  }
+});
+
+test('isMissingPage flags non-string values', () => {
+  for (const page of [123, null, {}, [], true]) {
+    assert.equal(isMissingPage(page), true, `expected ${JSON.stringify(page)} to be flagged`);
+  }
+});
+
+const ALLOWED_ORIGINS = ['https://portament.jp', 'https://www.portament.jp'];
+
+test('isOriginRejected passes an allow-listed origin', () => {
+  assert.equal(isOriginRejected('https://portament.jp', ALLOWED_ORIGINS), false);
+  assert.equal(isOriginRejected('https://www.portament.jp', ALLOWED_ORIGINS), false);
+});
+
+test('isOriginRejected rejects an origin not on the allow-list', () => {
+  assert.equal(isOriginRejected('https://evil.example', ALLOWED_ORIGINS), true);
+});
+
+test('isOriginRejected does NOT reject a missing origin (avoid false positives)', () => {
+  assert.equal(isOriginRejected(undefined, ALLOWED_ORIGINS), false);
+  assert.equal(isOriginRejected('', ALLOWED_ORIGINS), false);
 });
 
 if (process.exitCode) {

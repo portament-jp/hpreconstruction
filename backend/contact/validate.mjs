@@ -117,6 +117,34 @@ export function buildEmail(d, meta) {
   return { subject, text, html };
 }
 
+/**
+ * The shared form script always sends `page: location.pathname` (verified
+ * across every page that embeds the form), so a real browser submission can
+ * never be missing it, non-string, or outside the site (e.g. an absolute
+ * URL). Requests hitting the API directly - as bots that skip the page's JS
+ * do - typically omit this field or send garbage. Treating it as spam here
+ * carries no false-positive risk against legitimate traffic.
+ */
+export function isMissingPage(page) {
+  return typeof page !== 'string' || !page.startsWith('/');
+}
+
+/**
+ * Origin allow-list check for the CORS-facing guard in index.mjs.
+ *
+ * Only a *present* Origin that fails to match the allow-list is rejected.
+ * A *missing* Origin is deliberately NOT rejected: some privacy extensions,
+ * older browsers, and certain embedded/webview contexts strip the Origin
+ * header even on legitimate same-origin requests. Blocking on absence would
+ * risk silently dropping a real sales lead, which is far worse than letting
+ * a spam submission fall through to the other guards (missing `page`,
+ * honeypot, etc.).
+ */
+export function isOriginRejected(origin, allowedOrigins) {
+  if (!origin) return false;
+  return !allowedOrigins.includes(origin);
+}
+
 const IPV4_RE = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
 const IPV6_LOOSE_RE = /^[0-9a-fA-F:]{2,45}$/;
 
