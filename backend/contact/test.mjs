@@ -3,7 +3,7 @@
  * No AWS calls — validate.mjs is pure.
  */
 import assert from 'node:assert/strict';
-import { validate, buildEmail, pickClientIp, LIMITS } from './validate.mjs';
+import { validate, buildEmail, resolveClientIp, LIMITS } from './validate.mjs';
 
 let passed = 0;
 const test = (label, fn) => {
@@ -129,21 +129,57 @@ test('buildEmail shows a placeholder for missing company', () => {
   assert.ok(text.includes('会社名: (未記入)'));
 });
 
-test('pickClientIp takes the first X-Forwarded-For entry (the visitor)', () => {
-  assert.equal(pickClientIp('203.0.113.7, 130.176.0.1', '130.176.0.1'), '203.0.113.7');
-  assert.equal(pickClientIp('203.0.113.7', '130.176.0.1'), '203.0.113.7');
+test('CloudFront-Viewer-Address wins and is marked trusted', () => {
+  const r = resolveClientIp({
+    viewerAddress: '203.0.113.5:53412',
+    xff: '198.51.100.99, 203.0.113.5',
+    sourceIp: '130.176.0.1',
+  });
+  assert.equal(r.ip, '203.0.113.5');
+  assert.equal(r.trusted, true);
 });
 
-test('pickClientIp accepts IPv6', () => {
-  assert.equal(pickClientIp('2001:db8::1, 130.176.0.1', '130.176.0.1'), '2001:db8::1');
+test('IPv6 viewer address strips only the trailing port', () => {
+  const r = resolveClientIp({ viewerAddress: '2400:d320:2310:4018::1:53412' });
+  assert.equal(r.ip, '2400:d320:2310:4018::1');
+  assert.equal(r.trusted, true);
 });
 
-test('pickClientIp falls back to sourceIp on junk or spoofed garbage', () => {
-  assert.equal(pickClientIp('', '130.176.0.1'), '130.176.0.1');
-  assert.equal(pickClientIp(undefined, '130.176.0.1'), '130.176.0.1');
-  assert.equal(pickClientIp('<script>alert(1)</script>, 1.2.3.4', '130.176.0.1'), '130.176.0.1');
-  assert.equal(pickClientIp('999.1.1.1, 1.2.3.4', '130.176.0.1'), '130.176.0.1');
-  assert.equal(pickClientIp('not an ip', '130.176.0.1'), '130.176.0.1');
+test('viewer address without a port is left alone', () => {
+  assert.equal(resolveClientIp({ viewerAddress: '203.0.113.5' }).ip, '203.0.113.5');
+});
+
+// Kawazoe-san's finding: CloudFront APPENDS the viewer to the chain the client
+// sent, so entry [0] is whatever the attacker put there. Never trust one entry.
+test('spoofed X-Forwarded-For shows the whole chain, not the spoofed head', () => {
+  const r = resolveClientIp({
+    xff: '203.0.113.99, 2400:d320:2310:4018::1',
+    sourceIp: '130.176.0.1',
+  });
+  assert.ok(r.ip.includes('203.0.113.99'), 'chain is shown in full');
+  assert.ok(r.ip.includes('2400:d320:2310:4018::1'), 'real viewer is shown too');
+  assert.notEqual(r.ip, '203.0.113.99', 'must NOT present the spoofed head as the answer');
+  assert.ok(r.ip.includes('詐称可能'), 'chain is labelled as untrustworthy');
+  assert.equal(r.trusted, false);
+});
+
+test('single-entry chain is shown plainly but still untrusted', () => {
+  const r = resolveClientIp({ xff: '2400:d320:2310:4018::1', sourceIp: '130.176.0.1' });
+  assert.equal(r.ip, '2400:d320:2310:4018::1');
+  assert.equal(r.trusted, false);
+});
+
+test('junk entries are dropped from the chain', () => {
+  const r = resolveClientIp({ xff: 'Bcc: victim@example.com, 203.0.113.5', sourceIp: '130.176.0.1' });
+  assert.ok(!r.ip.includes('Bcc'), 'injected text must never reach the email');
+  assert.equal(r.ip, '203.0.113.5');
+});
+
+test('falls back to the edge IP when nothing usable is present', () => {
+  assert.equal(resolveClientIp({ sourceIp: '130.176.0.1' }).ip, '130.176.0.1');
+  assert.equal(resolveClientIp({ xff: 'garbage', sourceIp: '130.176.0.1' }).ip, '130.176.0.1');
+  assert.equal(resolveClientIp({ viewerAddress: 'nonsense', sourceIp: '130.176.0.1' }).ip, '130.176.0.1');
+  assert.equal(resolveClientIp().ip, '');
 });
 
 if (process.exitCode) {

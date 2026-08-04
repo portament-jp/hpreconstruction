@@ -120,17 +120,57 @@ export function buildEmail(d, meta) {
 const IPV4_RE = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
 const IPV6_LOOSE_RE = /^[0-9a-fA-F:]{2,45}$/;
 
+const isIp = (s) => {
+  const m = s.match(IPV4_RE);
+  if (m && m.slice(1).every((o) => Number(o) <= 255)) return true;
+  return s.includes(':') && IPV6_LOOSE_RE.test(s);
+};
+
 /**
- * Behind CloudFront, requestContext.http.sourceIp is the edge server, not the
- * visitor. CloudFront appends the viewer's IP to X-Forwarded-For, so the first
- * entry is the visitor — but the header is client-influenced, so the value is
- * validated as an IP shape and falls back to sourceIp on anything else.
- * Informational only; never used for auth decisions.
+ * Strip the trailing :port from a CloudFront-Viewer-Address value.
+ * IPv4 "192.0.2.1:53412" and IPv6 "2400:d320::1:53412" both put the port after
+ * the LAST colon, so split there rather than on the first.
  */
-export function pickClientIp(xff, fallback) {
-  const first = String(xff || '').split(',')[0].trim();
-  const m = first.match(IPV4_RE);
-  if (m && m.slice(1).every((o) => Number(o) <= 255)) return first;
-  if (first.includes(':') && IPV6_LOOSE_RE.test(first)) return first;
-  return fallback || '';
+function stripPort(value) {
+  const i = value.lastIndexOf(':');
+  if (i === -1) return value;
+  const head = value.slice(0, i);
+  const port = value.slice(i + 1);
+  return /^\d{1,5}$/.test(port) && isIp(head) ? head : value;
+}
+
+/**
+ * Work out what to show as the visitor's address.
+ *
+ * requestContext.http.sourceIp is the CloudFront edge, never the visitor.
+ * X-Forwarded-For cannot be indexed safely either: CloudFront *appends* the
+ * real viewer to whatever chain the client sent, so [0] is attacker-controlled,
+ * and counting from the end is not reliable because the function URL layer may
+ * append as well. So:
+ *
+ *   1. CloudFront-Viewer-Address — set by CloudFront, not viewer-influenceable.
+ *      Requires an origin request policy that forwards it.
+ *   2. Otherwise show the WHOLE X-Forwarded-For chain, clearly labelled, and
+ *      let the human reading the mail judge it. Never present one entry as fact.
+ *   3. Otherwise the edge IP.
+ *
+ * Informational only — never an input to an auth or trust decision.
+ */
+export function resolveClientIp({ viewerAddress, xff, sourceIp } = {}) {
+  const va = String(viewerAddress || '').trim();
+  if (va) {
+    const ip = stripPort(va);
+    if (isIp(ip)) return { ip, trusted: true };
+  }
+
+  const chain = String(xff || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s) => s && isIp(s));
+  if (chain.length === 1) return { ip: chain[0], trusted: false };
+  if (chain.length > 1) {
+    return { ip: `${chain.join(', ')} (X-Forwarded-For 全体 / 先頭は詐称可能)`, trusted: false };
+  }
+
+  return { ip: String(sourceIp || ''), trusted: false };
 }

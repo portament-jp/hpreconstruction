@@ -1,5 +1,5 @@
 import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2';
-import { validate, buildEmail, pickClientIp } from './validate.mjs';
+import { validate, buildEmail, resolveClientIp } from './validate.mjs';
 
 const ses = new SESv2Client({});
 
@@ -35,7 +35,12 @@ export async function handler(event) {
   const http = event?.requestContext?.http || {};
   const method = (http.method || '').toUpperCase();
   const headers = event?.headers || {};
-  const clientIp = pickClientIp(headers['x-forwarded-for'], http.sourceIp);
+  const client = resolveClientIp({
+    viewerAddress: headers['cloudfront-viewer-address'],
+    xff: headers['x-forwarded-for'],
+    sourceIp: http.sourceIp,
+  });
+  const clientIp = client.ip;
   const origin = headers.origin || headers.Origin || '';
   const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : '';
 
@@ -112,6 +117,8 @@ export async function handler(event) {
     return json(502, { ok: false, error: 'send_failed' }, corsOrigin);
   }
 
-  console.log(JSON.stringify({ event: 'sent', page: body.page, ip: clientIp }));
+  // ipTrusted tells us from the logs whether CloudFront-Viewer-Address is
+  // actually reaching the function, i.e. whether the origin request policy is on.
+  console.log(JSON.stringify({ event: 'sent', page: body.page, ip: clientIp, ipTrusted: client.trusted }));
   return json(200, { ok: true }, corsOrigin);
 }
