@@ -1,5 +1,5 @@
 import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2';
-import { validate, buildEmail } from './validate.mjs';
+import { validate, buildEmail, pickClientIp } from './validate.mjs';
 
 const ses = new SESv2Client({});
 
@@ -35,6 +35,7 @@ export async function handler(event) {
   const http = event?.requestContext?.http || {};
   const method = (http.method || '').toUpperCase();
   const headers = event?.headers || {};
+  const clientIp = pickClientIp(headers['x-forwarded-for'], http.sourceIp);
   const origin = headers.origin || headers.Origin || '';
   const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : '';
 
@@ -55,7 +56,7 @@ export async function handler(event) {
   // Requests that did not come through our CloudFront distribution are rejected,
   // so the raw *.lambda-url.on.aws hostname is not a usable open relay.
   if (!secretMatches(headers['x-portament-origin'])) {
-    console.warn(JSON.stringify({ event: 'origin_rejected', ip: http.sourceIp }));
+    console.warn(JSON.stringify({ event: 'origin_rejected', ip: clientIp }));
     return json(403, { ok: false, error: 'forbidden' }, corsOrigin);
   }
 
@@ -76,7 +77,7 @@ export async function handler(event) {
   if (!result.ok) {
     // Spam is answered with 200 so bots get no signal that they were caught.
     if (result.code === 'spam') {
-      console.warn(JSON.stringify({ event: 'honeypot', ip: http.sourceIp }));
+      console.warn(JSON.stringify({ event: 'honeypot', ip: clientIp }));
       return json(200, { ok: true }, corsOrigin);
     }
     return json(400, { ok: false, error: result.code, field: result.field }, corsOrigin);
@@ -84,7 +85,7 @@ export async function handler(event) {
 
   const { subject, text, html } = buildEmail(result.data, {
     page: typeof body.page === 'string' ? body.page.slice(0, 300) : '',
-    ip: http.sourceIp,
+    ip: clientIp,
     userAgent: headers['user-agent'],
     receivedAt: new Date().toISOString(),
   });
@@ -111,6 +112,6 @@ export async function handler(event) {
     return json(502, { ok: false, error: 'send_failed' }, corsOrigin);
   }
 
-  console.log(JSON.stringify({ event: 'sent', page: body.page, ip: http.sourceIp }));
+  console.log(JSON.stringify({ event: 'sent', page: body.page, ip: clientIp }));
   return json(200, { ok: true }, corsOrigin);
 }

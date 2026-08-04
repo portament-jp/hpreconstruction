@@ -116,3 +116,21 @@ export function buildEmail(d, meta) {
 
   return { subject, text, html };
 }
+
+const IPV4_RE = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
+const IPV6_LOOSE_RE = /^[0-9a-fA-F:]{2,45}$/;
+
+/**
+ * Behind CloudFront, requestContext.http.sourceIp is the edge server, not the
+ * visitor. CloudFront appends the viewer's IP to X-Forwarded-For, so the first
+ * entry is the visitor — but the header is client-influenced, so the value is
+ * validated as an IP shape and falls back to sourceIp on anything else.
+ * Informational only; never used for auth decisions.
+ */
+export function pickClientIp(xff, fallback) {
+  const first = String(xff || '').split(',')[0].trim();
+  const m = first.match(IPV4_RE);
+  if (m && m.slice(1).every((o) => Number(o) <= 255)) return first;
+  if (first.includes(':') && IPV6_LOOSE_RE.test(first)) return first;
+  return fallback || '';
+}
