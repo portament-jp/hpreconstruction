@@ -46,32 +46,39 @@ Why it is shaped this way:
 
 ## Deploying
 
-> **The `opsguide` profile cannot run this.** It has ReadOnly + S3/CloudFront/Route53/ACM
-> only — `lambda:CreateFunction`, `iam:CreateRole`, `iam:PassRole` and
-> `ses:CreateEmailIdentity` are all implicit-deny. The script checks this up front and
-> warns. Use credentials with those permissions on account `396115588530`; the
-> `opsguide-dev` profile is **not** a substitute (different account, `654654574429`).
+The `opsguide` profile **can** run this — it has `lambda:*`, `iam:*` (scoped to this
+role) and `ses:*` on account `396115588530` in addition to the
+S3/CloudFront/Route53/ACM access documented elsewhere. (An earlier version of this
+doc claimed the opposite; that was wrong.) The `opsguide-dev` profile is still **not**
+a substitute — different account, `654654574429`.
 
-### Getting the permissions
+### CI (GitHub Actions) — the normal path
 
-`deploy-permissions-policy.json` in this directory is the **minimum delta** needed on top
-of what `indonesia-dev` already has — its existing `AmazonRoute53FullAccess` and
-`CloudFrontFullAccess` already cover the DNS and distribution steps, so the policy only
-adds SES, IAM, Lambda and Logs, each scoped to the exact resources the script creates
-(the `portament.jp` identity, the one role, the one function, its log group). It does not
+Every push to `main` runs `.github/workflows/deploy.yml`, which deploys the backend and
+then the static site automatically. It authenticates via GitHub OIDC to the
+purpose-built role `arn:aws:iam::396115588530:role/portament-lp-deploy-github` — no
+long-lived AWS keys are stored in the repo. To trigger a deploy without pushing new
+commits (e.g. to retry after an unrelated CI failure), run the workflow manually from
+the **Actions** tab (`workflow_dispatch`).
+
+### Manual / local deploys
+
+`indonesia-dev` has a customer-managed IAM policy, `PortamentLPContactFormDeploy`
+(same content as `deploy-permissions-policy.json` in this directory), attached
+directly — the local deploy scripts can be run from that user's own credentials
+without borrowing anyone else's. Route 53 / CloudFront / S3 permissions are **not**
+part of that policy because `indonesia-dev` already held `AmazonRoute53FullAccess`
+and `CloudFrontFullAccess` (and S3 access) beforehand; the added policy only covers
+SES, IAM, Lambda and Logs, each scoped to the exact resources the script creates (the
+`portament.jp` identity, the one role, the one function, its log group). It does not
 grant general admin.
 
-Whoever holds admin on `396115588530` can either run the script themselves, or attach it:
-
-```bash
-aws iam create-policy --policy-name portament-contact-form-deploy \
-  --policy-document file://backend/deploy-permissions-policy.json
-aws iam attach-user-policy --user-name indonesia-dev \
-  --policy-arn arn:aws:iam::396115588530:policy/portament-contact-form-deploy
-```
-
-After the deploy succeeds the policy can be detached again — it is only needed to create
-the resources, not to run them.
+**Known constraint:** `ses:CreateEmailIdentity` does not support resource-level
+restriction — a policy that scopes it to the `portament.jp` identity ARN will still
+get denied by AWS for that action specifically. In practice this rarely matters: the
+`portament.jp` SES identity already exists and the script skips creation when it's
+already there (see step 1 below). It only becomes a problem if the identity needs to
+be recreated from scratch, which needs broader (admin) SES permissions.
 
 ```bash
 node backend/contact/test.mjs                    # unit tests first
@@ -102,15 +109,18 @@ The pages now surface a visible error when `/api/contact` fails instead of silen
 showing the success message, so **uploading the HTML before the backend exists replaces a
 fake success with a real error on the live site.**
 
+`deploy-contact-backend.sh` in this directory only ever touches the backend (Lambda,
+IAM, SES, the CloudFront `/api/*` behaviour). It never uploads HTML. The static pages
+are the responsibility of `deploy-site.sh` in the repo root — see its own `--dry-run`
+output for exactly what it uploads and invalidates. The CI workflow already runs them
+in the correct order; if deploying by hand, do the same:
+
 ```bash
 # 1. backend first
-AWS_PROFILE=<admin> ./backend/deploy-contact-backend.sh
+AWS_PROFILE=<admin> ./backend/deploy-contact-backend.sh --yes
 # 2. verify with the curl smoke test the script prints
-# 3. only then the pages
-AWS_PROFILE=opsguide aws s3 cp index.html s3://portament-lps/hpreconstruction/index.html
-#   … and the other four pages, then invalidate
-AWS_PROFILE=opsguide aws cloudfront create-invalidation --distribution-id E86W76PW0HMG8 \
-  --paths '/index.html' '/agentmaker.html' '/wavelopment.html' '/agentpartner.html' '/allrounder.html'
+# 3. only then the static pages
+AWS_PROFILE=<admin> ./deploy-site.sh
 ```
 
 ## Verifying
