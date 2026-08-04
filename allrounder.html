@@ -178,6 +178,11 @@
   .submit:hover::before { transform: translateY(0); }
   .form-done { display: none; font-size: clamp(16px,2.2vw,20px); line-height: 2; font-feature-settings:"palt"; }
   .form-done.show { display: block; }
+  .form-error { display: none; margin-top: 18px; color: #c0392b; font-size: clamp(14px,2vw,16px); line-height: 1.9; }
+  .form-error.show { display: block; }
+  .form-error a { color: inherit; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .contact-grid .submit[aria-busy="true"] { opacity: .55; pointer-events: none; }
   .mail-note { margin-top: clamp(28px,4vh,40px); font-family: var(--font-body); font-size: 13px; color: var(--gray); }
   .mail-note a { color: var(--brand-deep); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 1px; }
 
@@ -402,9 +407,14 @@
         <div class="field"><label for="cf-email">メールアドレス</label><input type="email" id="cf-email" name="email" autocomplete="email" required></div>
         <div class="field"><label for="cf-company">会社名</label><input type="text" id="cf-company" name="company" autocomplete="organization"></div>
         <div class="field"><label for="cf-message">お問い合わせ内容</label><textarea id="cf-message" name="message" required></textarea></div>
+        <div class="hp" aria-hidden="true">
+          <label for="cf-website">Website</label>
+          <input type="text" id="cf-website" name="website" tabindex="-1" autocomplete="off">
+        </div>
         <button type="submit" class="submit"><span>送信する</span></button>
       </form>
       <p class="form-done" id="formDone">お問い合わせありがとうございます。<br>担当者より2営業日以内にご連絡致します。</p>
+      <p class="form-error" id="formError" role="alert"></p>
       <p class="mail-note rv">メールでのお問い合わせ：<a href="mailto:sales@portament.jp">sales@portament.jp</a></p>
     </div>
   </section>
@@ -434,13 +444,42 @@
   }), { threshold: .14 });
   document.querySelectorAll('.rv').forEach(el => io.observe(el));
 
+  /* ===== お問い合わせフォーム(/api/contact 経由で SES 送信) ===== */
   const form = document.getElementById('contactForm');
-  if (form) form.addEventListener('submit', e => {
+  if (form) form.addEventListener('submit', async e => {
     e.preventDefault();
     if (!form.checkValidity()) { form.reportValidity(); return; }
-    form.style.display = 'none';
-    const d = document.getElementById('formDone'); d.classList.add('show');
-    d.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    const btn = form.querySelector('.submit');
+    const err = document.getElementById('formError');
+    err.classList.remove('show');
+    btn.setAttribute('aria-busy', 'true');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          name: form.elements.name.value,
+          email: form.elements.email.value,
+          company: form.elements.company.value,
+          message: form.elements.message.value,
+          website: form.elements.website.value,
+          page: location.pathname
+        })
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+
+      form.style.display = 'none';
+      const d = document.getElementById('formDone');
+      d.classList.add('show');
+      d.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (_) {
+      err.innerHTML = '送信に失敗しました。お手数ですが時間をおいて再度お試しいただくか、' +
+        '<a href="mailto:sales@portament.jp">sales@portament.jp</a> まで直接ご連絡ください。';
+      err.classList.add('show');
+      btn.removeAttribute('aria-busy');
+    }
   });
 </script>
 </body>
