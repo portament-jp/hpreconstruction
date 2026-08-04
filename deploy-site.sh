@@ -96,6 +96,12 @@ ok ".nojekyll"
 say "S3: uploading assets/ (recursive, content-type auto-detected)"
 run aws --region "$REGION" s3 cp "$SCRIPT_DIR/assets" "$DEST/assets" --recursive
 ok "assets/"
+# assets/ is uploaded without --cache-control, so CloudFront's default TTL
+# applies. Without invalidating it, replacing a file's contents under the
+# same name (e.g. a CSS or image update) can keep serving the stale version
+# for close to a day. One wildcard path costs the same as any other path
+# against the 1,000-free-per-month invalidation quota.
+INVALIDATION_PATHS+=("/assets/*")
 
 # ─────────────────────────── 4. CloudFront invalidation ──────────────────────
 say "CloudFront: invalidating ${#INVALIDATION_PATHS[@]} paths on $DISTRIBUTION_ID"

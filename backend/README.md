@@ -46,8 +46,9 @@ Why it is shaped this way:
 
 ## Deploying
 
-The `opsguide` profile **can** run this — it has `lambda:*`, `iam:*` (scoped to this
-role) and `ses:*` on account `396115588530` in addition to the
+The `opsguide` profile **can** run this — it is `opsguide-admin`, a general
+administrator user on account `396115588530`, not a role scoped to this deploy, so it
+has `lambda:*`, `iam:*` and `ses:*` (and everything else) in addition to the
 S3/CloudFront/Route53/ACM access documented elsewhere. (An earlier version of this
 doc claimed the opposite; that was wrong.) The `opsguide-dev` profile is still **not**
 a substitute — different account, `654654574429`.
@@ -73,12 +74,16 @@ SES, IAM, Lambda and Logs, each scoped to the exact resources the script creates
 `portament.jp` identity, the one role, the one function, its log group). It does not
 grant general admin.
 
-**Known constraint:** `ses:CreateEmailIdentity` does not support resource-level
-restriction — a policy that scopes it to the `portament.jp` identity ARN will still
-get denied by AWS for that action specifically. In practice this rarely matters: the
-`portament.jp` SES identity already exists and the script skips creation when it's
-already there (see step 1 below). It only becomes a problem if the identity needs to
-be recreated from scratch, which needs broader (admin) SES permissions.
+**Known constraint (partially unverified):** running `aws iam simulate-principal-policy`
+against a policy that scopes `ses:CreateEmailIdentity` to the `portament.jp` identity
+ARN returns `implicitDeny` — the policy simulator doesn't treat that action as
+resource-restrictable. We have **not** confirmed this against a real
+`CreateEmailIdentity` call (the identity already exists, so there's nothing to test
+against without deleting it first, which we won't do casually). In practice this
+rarely matters either way: the `portament.jp` SES identity already exists and the
+script skips creation when it's already there (see step 1 below). It only becomes a
+problem if the identity needs to be recreated from scratch, which needs broader
+(admin) SES permissions.
 
 ```bash
 node backend/contact/test.mjs                    # unit tests first
