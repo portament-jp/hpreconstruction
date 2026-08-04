@@ -3,7 +3,7 @@
  * No AWS calls — validate.mjs is pure.
  */
 import assert from 'node:assert/strict';
-import { validate, buildEmail, LIMITS } from './validate.mjs';
+import { validate, buildEmail, pickClientIp, LIMITS } from './validate.mjs';
 
 let passed = 0;
 const test = (label, fn) => {
@@ -127,6 +127,23 @@ test('buildEmail escapes HTML in user input', () => {
 test('buildEmail shows a placeholder for missing company', () => {
   const { text } = buildEmail({ ...good, company: '' }, { receivedAt: '2026-08-03T00:00:00.000Z' });
   assert.ok(text.includes('会社名: (未記入)'));
+});
+
+test('pickClientIp takes the first X-Forwarded-For entry (the visitor)', () => {
+  assert.equal(pickClientIp('203.0.113.7, 130.176.0.1', '130.176.0.1'), '203.0.113.7');
+  assert.equal(pickClientIp('203.0.113.7', '130.176.0.1'), '203.0.113.7');
+});
+
+test('pickClientIp accepts IPv6', () => {
+  assert.equal(pickClientIp('2001:db8::1, 130.176.0.1', '130.176.0.1'), '2001:db8::1');
+});
+
+test('pickClientIp falls back to sourceIp on junk or spoofed garbage', () => {
+  assert.equal(pickClientIp('', '130.176.0.1'), '130.176.0.1');
+  assert.equal(pickClientIp(undefined, '130.176.0.1'), '130.176.0.1');
+  assert.equal(pickClientIp('<script>alert(1)</script>, 1.2.3.4', '130.176.0.1'), '130.176.0.1');
+  assert.equal(pickClientIp('999.1.1.1, 1.2.3.4', '130.176.0.1'), '130.176.0.1');
+  assert.equal(pickClientIp('not an ip', '130.176.0.1'), '130.176.0.1');
 });
 
 if (process.exitCode) {
