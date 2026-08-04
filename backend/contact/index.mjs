@@ -1,5 +1,5 @@
 import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2';
-import { validate, buildEmail, pickClientIp } from './validate.mjs';
+import { validate, buildEmail, pickClientIp, isMissingPage, isOriginRejected } from './validate.mjs';
 
 const ses = new SESv2Client({});
 
@@ -60,6 +60,14 @@ export async function handler(event) {
     return json(403, { ok: false, error: 'forbidden' }, corsOrigin);
   }
 
+  // Origin allow-list guard: only reject when Origin is present and unrecognised.
+  // A missing Origin is intentionally let through here (see isOriginRejected doc)
+  // and is instead caught downstream by the page-field guard, if it is spam.
+  if (isOriginRejected(origin, ALLOWED_ORIGINS)) {
+    console.warn(JSON.stringify({ event: 'bad_origin', ip: clientIp }));
+    return json(403, { ok: false, error: 'forbidden' }, corsOrigin);
+  }
+
   if (!RECIPIENT || !SENDER) {
     console.error(JSON.stringify({ event: 'misconfigured', RECIPIENT: !!RECIPIENT, SENDER: !!SENDER }));
     return json(500, { ok: false, error: 'server_error' }, corsOrigin);
@@ -71,6 +79,15 @@ export async function handler(event) {
     body = JSON.parse(raw || '{}');
   } catch {
     return json(400, { ok: false, error: 'bad_body' }, corsOrigin);
+  }
+
+  // Every legitimate submission carries page: location.pathname (set by the
+  // shared form script on every page). Direct POSTs to this endpoint - the
+  // pattern seen in the spam wave - omit it, so treat it the same as the
+  // honeypot: answer 200 with no signal that anything was detected.
+  if (isMissingPage(body.page)) {
+    console.warn(JSON.stringify({ event: 'missing_page', ip: clientIp }));
+    return json(200, { ok: true }, corsOrigin);
   }
 
   const result = validate(body);
