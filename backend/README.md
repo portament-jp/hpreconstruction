@@ -139,6 +139,32 @@ The script will:
 
 Override the addresses with `RECIPIENT_EMAIL=` / `SENDER_EMAIL=` env vars.
 
+## Deploy order matters — and "backend first" is not always right
+
+CI deploys the **backend before the static site**. That is correct when the change makes
+the backend *more permissive* (the endpoint has to exist before pages call it), and it is
+**wrong** when the change makes the backend *stricter*.
+
+Adding Turnstile was the stricter case, and it caused a live outage on 2026-08-05: the
+deploy failed partway, after the Lambda had been updated to require a token but before the
+pages that send one were published. Every submission 400'd until the secret was cleared.
+
+The rule that avoids it: **roll out a new server-side requirement in two deploys.**
+
+1. Deploy the frontend change *and* the backend, with the feature gate **off**
+   (`TURNSTILE_SECRET` absent). Old and new pages both work; the extra `token` field is
+   simply ignored by the backend.
+2. Once the pages are live and caches have turned over (HTML is `max-age=300`), set the
+   secret and deploy again to switch enforcement on.
+
+Setting the GitHub secret *before* the first deploy — which is what happened — collapses
+both stages into one and reintroduces the gap.
+
+Recovery, if it happens again: clear `TURNSTILE_SECRET` on the function
+(`aws lambda update-function-configuration --environment …`, remembering that `--environment`
+replaces the **whole** map, so re-send the other four variables). That restores service in
+seconds without a redeploy.
+
 ## Deploy order matters
 
 The HTML changes and the backend must go live together, and the backend should go first.

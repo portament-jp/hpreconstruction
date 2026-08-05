@@ -63,6 +63,16 @@
       "Resource": "arn:aws:lambda:us-east-1:396115588530:function:portament-contact-form"
     },
     {
+      "Sid": "OriginRequestPolicyForViewerAddress",
+      "Effect": "Allow",
+      "Action": [
+        "cloudfront:ListOriginRequestPolicies",
+        "cloudfront:GetOriginRequestPolicy",
+        "cloudfront:CreateOriginRequestPolicy"
+      ],
+      "Resource": "*"
+    },
+    {
       "Sid": "FunctionLogs",
       "Effect": "Allow",
       "Action": [

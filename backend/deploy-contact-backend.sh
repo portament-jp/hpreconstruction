@@ -55,6 +55,8 @@ CACHE_POLICY_DISABLED="4135ea2d-6df8-44a3-9df3-4b5a84be39ad"           # Caching
 # and the managed policies that do also forward Host, which makes a Lambda
 # function URL return 403. So we whitelist exactly what the handler needs.
 ORIGIN_REQ_POLICY_NAME="portament-contact-viewer-address"
+# Fallback if we cannot manage custom policies (see step 7).
+ORIGIN_REQ_MANAGED_ALL_VIEWER_EXCEPT_HOST="b689b0a8-53d0-40ab-baf2-68738e2966ac"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_DIR="$SCRIPT_DIR/.build"
@@ -294,36 +296,62 @@ FUNCTION_HOST="$(sed -E 's#^https://##; s#/$##' <<<"$FUNCTION_URL")"
 ok "origin host: $FUNCTION_HOST"
 
 # ──────────────────────────── 7. CloudFront wiring ───────────────────────────
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+aws cloudfront get-distribution-config --id "$DISTRIBUTION_ID" --output json > "$tmp/current.json"
+etag="$(jq -r '.ETag' "$tmp/current.json")"
+
 say "CloudFront: origin request policy $ORIGIN_REQ_POLICY_NAME"
+# This step only improves the accuracy of the visitor IP printed in the mail, so
+# it must NEVER abort the deploy: on 2026-08-05 an AccessDenied here killed the
+# run *after* the Lambda had been updated but *before* the static site went out,
+# leaving a backend that required a Turnstile token and pages that did not send
+# one. cloudfront:{List,Create}OriginRequestPolicy are account-level actions that
+# cannot be scoped to a single distribution, so a least-privilege CI role may
+# legitimately not have them.
 ORP_ID="$(aws cloudfront list-origin-request-policies --type custom \
   --query "OriginRequestPolicyList.Items[?OriginRequestPolicy.OriginRequestPolicyConfig.Name=='$ORIGIN_REQ_POLICY_NAME'].OriginRequestPolicy.Id | [0]" \
-  --output text 2>/dev/null)"
+  --output text 2>/dev/null || true)"
 if [[ -n "$ORP_ID" && "$ORP_ID" != "None" ]]; then
   ok "policy already exists ($ORP_ID)"
 else
   # CloudFront-Viewer-Address is set by CloudFront and cannot be spoofed by the
   # viewer, unlike X-Forwarded-For. Host is deliberately absent: forwarding the
   # viewer Host to a Lambda function URL makes it return 403.
-  ORP_ID="$(aws cloudfront create-origin-request-policy --origin-request-policy-config "$(jq -n \
-    --arg name "$ORIGIN_REQ_POLICY_NAME" '{
-      Comment: "All headers the contact form needs, plus CloudFront-Viewer-Address, minus Host",
-      Name: $name,
-      HeadersConfig: {
-        HeaderBehavior: "whitelist",
-        Headers: { Quantity: 5, Items: ["CloudFront-Viewer-Address","content-type","origin","user-agent","accept"] }
-      },
-      CookiesConfig: { CookieBehavior: "none" },
-      QueryStringsConfig: { QueryStringBehavior: "none" }
-    }')" --query 'OriginRequestPolicy.Id' --output text)"
-  ok "policy created ($ORP_ID)"
+  if ORP_ID="$(aws cloudfront create-origin-request-policy --origin-request-policy-config "$(jq -n \
+      --arg name "$ORIGIN_REQ_POLICY_NAME" '{
+        Comment: "All headers the contact form needs, plus CloudFront-Viewer-Address, minus Host",
+        Name: $name,
+        HeadersConfig: {
+          HeaderBehavior: "whitelist",
+          Headers: { Quantity: 5, Items: ["CloudFront-Viewer-Address","content-type","origin","user-agent","accept"] }
+        },
+        CookiesConfig: { CookieBehavior: "none" },
+        QueryStringsConfig: { QueryStringBehavior: "none" }
+      }')" --query 'OriginRequestPolicy.Id' --output text 2>/dev/null)"; then
+    ok "policy created ($ORP_ID)"
+  else
+    ORP_ID=""
+  fi
+fi
+
+if [[ -z "$ORP_ID" || "$ORP_ID" == "None" ]]; then
+  # Reuse whatever the behaviour already has rather than downgrading a policy
+  # that a previous, better-privileged run may have attached correctly.
+  ORP_ID="$(jq -r --arg p "$PATH_PATTERN" \
+    'first((.DistributionConfig.CacheBehaviors.Items // [])[] | select(.PathPattern == $p) | .OriginRequestPolicyId) // ""' \
+    "$tmp/current.json")"
+  if [[ -n "$ORP_ID" ]]; then
+    warn "cannot manage origin request policies — keeping the one already attached ($ORP_ID)"
+  else
+    ORP_ID="$ORIGIN_REQ_MANAGED_ALL_VIEWER_EXCEPT_HOST"
+    warn "cannot manage origin request policies — using the managed fallback"
+  fi
+  warn "visitor IP in mail will fall back to the X-Forwarded-For chain (ipTrusted:false)"
+  warn "to fix: grant cloudfront:ListOriginRequestPolicies + cloudfront:CreateOriginRequestPolicy on Resource: *"
 fi
 
 say "CloudFront: $PATH_PATTERN behaviour on $DISTRIBUTION_ID"
-tmp="$(mktemp -d)"
-trap 'rm -rf "$tmp"' EXIT
-
-aws cloudfront get-distribution-config --id "$DISTRIBUTION_ID" --output json > "$tmp/current.json"
-etag="$(jq -r '.ETag' "$tmp/current.json")"
 
 jq --arg oid "$ORIGIN_ID" --arg host "$FUNCTION_HOST" --arg secret "$ORIGIN_SECRET" \
    --arg header "$SECRET_HEADER" --arg pattern "$PATH_PATTERN" \
