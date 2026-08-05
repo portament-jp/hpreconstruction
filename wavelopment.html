@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
   /* ============ サービス詳細ページ（元 test-site 構成に準拠：ブランド色ヒーロー＋ポイント＋フロー） ============ */
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -196,6 +197,7 @@
   .form-error a { color: inherit; }
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   .contact-grid .submit[aria-busy="true"] { opacity: .55; pointer-events: none; }
+  .cf-turnstile { margin-bottom: clamp(24px,4vh,34px); }
   .mail-note { margin-top: clamp(28px,4vh,40px); font-family: var(--font-body); font-size: 13px; color: var(--gray); }
   .mail-note a { color: var(--brand-deep); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 1px; }
 
@@ -311,6 +313,10 @@
           <label for="cf-website">Website</label>
           <input type="text" id="cf-website" name="website" tabindex="-1" autocomplete="off">
         </div>
+        <div class="cf-turnstile"
+             data-sitekey="0x4AAAAAAEG04b06FRhouwWD"
+             data-language="ja"
+             data-appearance="always"></div>
         <button type="submit" class="submit"><span>送信する</span></button>
       </form>
       <p class="form-done" id="formDone">お問い合わせありがとうございます。<br>担当者より2営業日以内にご連絡致します。</p>
@@ -353,6 +359,17 @@
     const btn = form.querySelector('.submit');
     const err = document.getElementById('formError');
     err.classList.remove('show');
+
+    // Re-read every time: tokens are single-use and expire after ~5 minutes,
+    // so a cached value would be stale by the time a slow visitor submits.
+    const token = (window.turnstile && window.turnstile.getResponse()) ||
+      (form.elements['cf-turnstile-response'] && form.elements['cf-turnstile-response'].value) || '';
+    if (!token) {
+      err.textContent = '認証が完了していません。少し待ってから、もう一度送信してください。';
+      err.classList.add('show');
+      return;
+    }
+
     btn.setAttribute('aria-busy', 'true');
 
     try {
@@ -365,7 +382,8 @@
           company: form.elements.company.value,
           message: form.elements.message.value,
           website: form.elements.website.value,
-          page: location.pathname
+          page: location.pathname,
+          token: token
         })
       });
       if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -379,6 +397,9 @@
         '<a href="mailto:sales@portament.jp">sales@portament.jp</a> まで直接ご連絡ください。';
       err.classList.add('show');
       btn.removeAttribute('aria-busy');
+      // The token is burnt whether or not the request succeeded; without a reset
+      // every retry would submit an already-spent value and fail forever.
+      if (window.turnstile) window.turnstile.reset();
     }
   });
 </script>

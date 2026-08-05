@@ -4,11 +4,26 @@
  */
 import assert from 'node:assert/strict';
 import { validate, buildEmail, resolveClientIp, LIMITS, isMissingPage, isOriginRejected } from './validate.mjs';
+import { isTokenShapeValid, verifyTurnstile, MAX_TOKEN_LENGTH } from './turnstile.mjs';
 
 let passed = 0;
 const test = (label, fn) => {
   try {
     fn();
+    passed++;
+  } catch (err) {
+    console.error(`FAIL: ${label}`);
+    console.error(err.message);
+    process.exitCode = 1;
+  }
+};
+
+// `test` is synchronous and ignores fn's return value, so an async body's
+// rejection would surface as an unhandled rejection (fatal on Node 22) instead
+// of a clean FAIL line. Async cases must use this variant and be awaited.
+const testAsync = async (label, fn) => {
+  try {
+    await fn();
     passed++;
   } catch (err) {
     console.error(`FAIL: ${label}`);
@@ -218,6 +233,103 @@ test('isOriginRejected rejects an origin not on the allow-list', () => {
 test('isOriginRejected does NOT reject a missing origin (avoid false positives)', () => {
   assert.equal(isOriginRejected(undefined, ALLOWED_ORIGINS), false);
   assert.equal(isOriginRejected('', ALLOWED_ORIGINS), false);
+});
+
+/* ─────────────────────────── Cloudflare Turnstile ─────────────────────────── */
+
+test('token shape: accepts a normal token', () => {
+  assert.equal(isTokenShapeValid('0.abc-DEF_123'), true);
+});
+
+test('token shape: rejects empty, non-string and oversized', () => {
+  for (const bad of ['', null, undefined, 42, {}, []]) {
+    assert.equal(isTokenShapeValid(bad), false, `expected reject for ${JSON.stringify(bad)}`);
+  }
+  assert.equal(isTokenShapeValid('a'.repeat(MAX_TOKEN_LENGTH)), true);
+  assert.equal(isTokenShapeValid('a'.repeat(MAX_TOKEN_LENGTH + 1)), false);
+});
+
+// Records what was sent so we can assert on the request Cloudflare would receive.
+const stubFetch = (impl) => {
+  const calls = [];
+  const fn = async (url, opts) => {
+    calls.push({ url, opts, body: new URLSearchParams(opts.body) });
+    return impl();
+  };
+  fn.calls = calls;
+  return fn;
+};
+const jsonRes = (payload, ok = true, status = 200) => ({
+  ok, status, json: async () => payload,
+});
+
+await testAsync('verify: success', async () => {
+  const f = stubFetch(() => jsonRes({ success: true }));
+  const r = await verifyTurnstile('tok', { secret: 'sek', fetchImpl: f, timeoutMs: 50 });
+  assert.deepEqual(r, { ok: true });
+  assert.equal(f.calls.length, 1);
+  assert.equal(f.calls[0].body.get('secret'), 'sek');
+  assert.equal(f.calls[0].body.get('response'), 'tok');
+});
+
+await testAsync('verify: remoteip sent only when supplied', async () => {
+  const withIp = stubFetch(() => jsonRes({ success: true }));
+  await verifyTurnstile('tok', { secret: 's', remoteIp: '203.0.113.5', fetchImpl: withIp, timeoutMs: 50 });
+  assert.equal(withIp.calls[0].body.get('remoteip'), '203.0.113.5');
+
+  const noIp = stubFetch(() => jsonRes({ success: true }));
+  await verifyTurnstile('tok', { secret: 's', remoteIp: '', fetchImpl: noIp, timeoutMs: 50 });
+  assert.equal(noIp.calls[0].body.has('remoteip'), false, 'must omit rather than send empty');
+});
+
+await testAsync('verify: Cloudflare rejection surfaces error-codes', async () => {
+  const f = stubFetch(() => jsonRes({ success: false, 'error-codes': ['invalid-input-response'] }));
+  const r = await verifyTurnstile('tok', { secret: 's', fetchImpl: f, timeoutMs: 50 });
+  assert.equal(r.ok, false);
+  assert.equal(r.reason, 'rejected');
+  assert.deepEqual(r.errorCodes, ['invalid-input-response']);
+});
+
+await testAsync('verify: a spent token is a rejection, not an outage', async () => {
+  const f = stubFetch(() => jsonRes({ success: false, 'error-codes': ['timeout-or-duplicate'] }));
+  const r = await verifyTurnstile('tok', { secret: 's', fetchImpl: f, timeoutMs: 50 });
+  assert.equal(r.reason, 'rejected', 'must not be reported as unreachable');
+});
+
+await testAsync('verify: network error is unreachable, not rejected', async () => {
+  const f = stubFetch(() => { throw Object.assign(new Error('boom'), { name: 'TypeError' }); });
+  const r = await verifyTurnstile('tok', { secret: 's', fetchImpl: f, timeoutMs: 50 });
+  assert.equal(r.ok, false);
+  assert.equal(r.reason, 'unreachable');
+});
+
+await testAsync('verify: timeout is unreachable', async () => {
+  const f = stubFetch(() => { throw Object.assign(new Error('t'), { name: 'TimeoutError' }); });
+  const r = await verifyTurnstile('tok', { secret: 's', fetchImpl: f, timeoutMs: 50 });
+  assert.equal(r.reason, 'unreachable');
+  assert.equal(r.detail, 'TimeoutError');
+});
+
+await testAsync('verify: HTTP 5xx is unreachable', async () => {
+  const f = stubFetch(() => jsonRes({}, false, 503));
+  const r = await verifyTurnstile('tok', { secret: 's', fetchImpl: f, timeoutMs: 50 });
+  assert.equal(r.reason, 'unreachable');
+  assert.equal(r.detail, 'HTTP 503');
+});
+
+await testAsync('verify: unparseable body is unreachable, never a pass', async () => {
+  const f = stubFetch(() => ({ ok: true, status: 200, json: async () => { throw new Error('nope'); } }));
+  const r = await verifyTurnstile('tok', { secret: 's', fetchImpl: f, timeoutMs: 50 });
+  assert.equal(r.ok, false);
+  assert.equal(r.detail, 'bad_json');
+});
+
+await testAsync('verify: a body without success:true never passes', async () => {
+  for (const payload of [{}, { success: 'true' }, { success: 1 }, null]) {
+    const f = stubFetch(() => jsonRes(payload));
+    const r = await verifyTurnstile('tok', { secret: 's', fetchImpl: f, timeoutMs: 50 });
+    assert.equal(r.ok, false, `expected failure for ${JSON.stringify(payload)}`);
+  }
 });
 
 if (process.exitCode) {

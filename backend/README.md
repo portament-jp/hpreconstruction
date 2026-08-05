@@ -72,6 +72,7 @@ policy is attached.
 |---|---|
 | `contact/index.mjs` | Lambda handler — HTTP concerns, secret check, SES send |
 | `contact/validate.mjs` | Pure validation + email building (no AWS imports) |
+| `contact/turnstile.mjs` | Cloudflare Turnstile verification (the only module doing network I/O) |
 | `contact/test.mjs` | Unit tests — `node backend/contact/test.mjs` |
 | `deploy-contact-backend.sh` | Idempotent deploy of every piece above |
 
@@ -176,13 +177,57 @@ Logs: `aws logs tail /aws/lambda/portament-contact-form --follow --region us-eas
 
 ## Spam handling
 
-A hidden `website` input is added to each form. Bots fill it; browsers leave it empty.
-When it is non-empty the handler logs `honeypot` and returns `200 {"ok":true}` without
-sending, so the bot gets no signal that it was caught. Length caps and a control-character
-guard (header injection) are enforced server-side regardless of what the browser allowed.
+Four layers, cheapest first. Order matters: each one drops traffic before the next
+spends anything on it.
 
-If volume becomes a problem, the next step is AWS WAF with a rate-based rule on the
-`/api/*` behaviour — no code change needed.
+1. **Origin secret** — CloudFront injects `x-portament-origin`; anything hitting the raw
+   `*.lambda-url.on.aws` host without it gets 403 (`origin_rejected`).
+2. **Origin allow-list** — a *present* but unrecognised `Origin` is rejected (`bad_origin`).
+   A *missing* Origin is deliberately allowed: privacy extensions and webviews strip it, and
+   dropping a real sales lead is worse than letting spam fall through to the next layer.
+3. **`page` field** — every real submission sends `page: location.pathname`. Direct POSTs
+   omit it. Logged as `missing_page`, answered `200 {"ok":true}` so the bot learns nothing.
+4. **Cloudflare Turnstile** — see below.
+
+Plus the honeypot: a hidden `website` input that bots fill and browsers leave empty
+(`honeypot`, also answered 200). Length caps and a control-character guard (header
+injection) are enforced server-side regardless of what the browser allowed.
+
+### Cloudflare Turnstile
+
+Layers 1–3 all check things a bot can trivially copy once it reads our public JavaScript —
+the `page` field in particular is one line for an attacker to add. Turnstile is the durable
+layer: the token can only be minted by a real browser session and is verified server-side
+against Cloudflare.
+
+- **Site key** `0x4AAAAAAEG04b06FRhouwWD` — public, hardcoded in all 5 pages.
+- **Secret key** — the `TURNSTILE_SECRET` Lambda env var, sourced from the GitHub repo
+  secret of the same name. Never in the repo.
+- **Verification runs after the `page` guard**, so cheap spam is already gone and we only
+  spend a Cloudflare round-trip on requests that look real.
+- **Fails closed.** No verdict means no email; the page shows the existing message pointing
+  the visitor at `sales@portament.jp`, so a genuine lead is redirected rather than lost.
+  Distinct log events separate the cases: `turnstile_missing` (no token — the bot case),
+  `turnstile_failed` (Cloudflare rejected it, with `error-codes`), and
+  `turnstile_unreachable` (network/timeout — watch this one; a sustained rise means the
+  fail-closed choice is costing real inquiries).
+- **`TURNSTILE_SECRET` unset ⇒ verification is skipped entirely.** Same idiom as
+  `ORIGIN_SECRET`. This is what makes the secret safe to rotate and the backend safe to
+  deploy before the key exists — a missing secret degrades to "Turnstile does nothing", never
+  to an outage.
+- **`remoteip` is only sent to Cloudflare when the address came from
+  `CloudFront-Viewer-Address`** (`ipTrusted: true`). Feeding it a spoofable `X-Forwarded-For`
+  value would make its risk scoring worse, not better.
+
+Three browser-side traps the handler in each page deals with explicitly, all of which
+produce a form that silently stops working if ignored: Turnstile's response is a *hidden*
+input so `form.checkValidity()` cannot cover it and the token is checked by hand; tokens are
+**single-use**, so the widget is reset after any failure or a retry submits a spent token
+forever; and tokens **expire after ~5 minutes**, so the token is re-read at submit time
+rather than cached.
+
+If volume still becomes a problem, the remaining step is AWS WAF with a rate-based rule on
+the `/api/*` behaviour — no code change needed.
 
 ## Known gaps / follow-ups
 
