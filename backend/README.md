@@ -34,6 +34,37 @@ Why it is shaped this way:
   without it, so the raw URL is not an open relay.
 - **us-east-1.** SES already has production access there (50,000/day). ap-northeast-1
   is still in the sandbox and would need a support request.
+- **Custom origin request policy `portament-contact-viewer-address`**, not the managed
+  `AllViewerExceptHostHeader`. See "Visitor IP" below.
+
+## Visitor IP
+
+Getting the real visitor address right is fiddlier than it looks, and the first two
+attempts were both wrong:
+
+- `requestContext.http.sourceIp` is the **CloudFront edge**, not the visitor.
+- The first entry of `X-Forwarded-For` is **attacker-controlled**. CloudFront *appends*
+  the real viewer address to whatever chain the client sent, so a request with
+  `X-Forwarded-For: 203.0.113.99` arrives as `203.0.113.99, <real viewer>`. Taking `[0]`
+  reports whatever the sender made up. Counting from the end is not safe to guess either,
+  since the function URL layer may append as well.
+
+So the handler prefers **`CloudFront-Viewer-Address`**, which CloudFront sets itself and
+the viewer cannot influence. It carries a trailing `:port` (on IPv6 too, after the *last*
+colon) which is stripped. If that header is absent, the handler falls back to printing the
+**entire `X-Forwarded-For` chain**, labelled as spoofable, rather than presenting one entry
+as fact. Last resort is the edge IP.
+
+`CloudFront-Viewer-Address` only arrives if the origin request policy forwards it. The
+managed `AllViewerExceptHostHeader` does not include it, and the managed policies that do
+also forward `Host`, which makes a Lambda function URL return 403. Hence the custom
+whitelist policy, which the deploy script creates and reuses by name.
+
+The `sent` log line includes `ipTrusted` — `true` means the header arrived and the IP is
+the reliable one, `false` means it fell back. That is the quickest way to confirm the
+policy is attached.
+
+**This value is informational only and is never an input to an auth or trust decision.**
 
 ## Files
 

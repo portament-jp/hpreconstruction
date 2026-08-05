@@ -49,7 +49,12 @@ SECRET_HEADER="x-portament-origin"
 
 # AWS managed policy IDs
 CACHE_POLICY_DISABLED="4135ea2d-6df8-44a3-9df3-4b5a84be39ad"           # CachingDisabled
-ORIGIN_REQ_ALL_VIEWER_EXCEPT_HOST="b689b0a8-53d0-40ab-baf2-68738e2966ac" # AllViewerExceptHostHeader
+
+# Origin request policy: created by this script (see step 7a), not a managed one.
+# The managed AllViewerExceptHostHeader does NOT forward CloudFront-Viewer-Address,
+# and the managed policies that do also forward Host, which makes a Lambda
+# function URL return 403. So we whitelist exactly what the handler needs.
+ORIGIN_REQ_POLICY_NAME="portament-contact-viewer-address"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_DIR="$SCRIPT_DIR/.build"
@@ -262,6 +267,30 @@ FUNCTION_HOST="$(sed -E 's#^https://##; s#/$##' <<<"$FUNCTION_URL")"
 ok "origin host: $FUNCTION_HOST"
 
 # ──────────────────────────── 7. CloudFront wiring ───────────────────────────
+say "CloudFront: origin request policy $ORIGIN_REQ_POLICY_NAME"
+ORP_ID="$(aws cloudfront list-origin-request-policies --type custom \
+  --query "OriginRequestPolicyList.Items[?OriginRequestPolicy.OriginRequestPolicyConfig.Name=='$ORIGIN_REQ_POLICY_NAME'].OriginRequestPolicy.Id | [0]" \
+  --output text 2>/dev/null)"
+if [[ -n "$ORP_ID" && "$ORP_ID" != "None" ]]; then
+  ok "policy already exists ($ORP_ID)"
+else
+  # CloudFront-Viewer-Address is set by CloudFront and cannot be spoofed by the
+  # viewer, unlike X-Forwarded-For. Host is deliberately absent: forwarding the
+  # viewer Host to a Lambda function URL makes it return 403.
+  ORP_ID="$(aws cloudfront create-origin-request-policy --origin-request-policy-config "$(jq -n \
+    --arg name "$ORIGIN_REQ_POLICY_NAME" '{
+      Comment: "All headers the contact form needs, plus CloudFront-Viewer-Address, minus Host",
+      Name: $name,
+      HeadersConfig: {
+        HeaderBehavior: "whitelist",
+        Headers: { Quantity: 5, Items: ["CloudFront-Viewer-Address","content-type","origin","user-agent","accept"] }
+      },
+      CookiesConfig: { CookieBehavior: "none" },
+      QueryStringsConfig: { QueryStringBehavior: "none" }
+    }')" --query 'OriginRequestPolicy.Id' --output text)"
+  ok "policy created ($ORP_ID)"
+fi
+
 say "CloudFront: $PATH_PATTERN behaviour on $DISTRIBUTION_ID"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
@@ -271,7 +300,7 @@ etag="$(jq -r '.ETag' "$tmp/current.json")"
 
 jq --arg oid "$ORIGIN_ID" --arg host "$FUNCTION_HOST" --arg secret "$ORIGIN_SECRET" \
    --arg header "$SECRET_HEADER" --arg pattern "$PATH_PATTERN" \
-   --arg cache "$CACHE_POLICY_DISABLED" --arg orp "$ORIGIN_REQ_ALL_VIEWER_EXCEPT_HOST" '
+   --arg cache "$CACHE_POLICY_DISABLED" --arg orp "$ORP_ID" '
   .DistributionConfig
   # ── origin: replace any previous entry with the same id ──
   | .Origins.Items = ((.Origins.Items | map(select(.Id != $oid))) + [{
