@@ -47,7 +47,13 @@ jobs:
       # visible error when /api/contact fails instead of silently showing the
       # success message, so publishing the pages before the backend exists
       # would replace a fake success with a real error on the live site.
+      # TURNSTILE_SECRET is the Cloudflare Turnstile secret key. If the repo
+      # secret is unset this is empty and the deploy script falls back to the
+      # value already on the live function, so a missing secret leaves spam
+      # verification as-is rather than silently disabling it.
       - name: Deploy contact form backend
+        env:
+          TURNSTILE_SECRET: ${{ secrets.TURNSTILE_SECRET }}
         run: ./backend/deploy-contact-backend.sh --yes
 
       - name: Deploy static site

@@ -2,4 +2,5 @@
 
 backend/.build/
 backend/.origin-secret
+backend/.turnstile-secret
 backend/.cloudfront-planned.json

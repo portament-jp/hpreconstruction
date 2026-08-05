@@ -59,6 +59,7 @@ ORIGIN_REQ_POLICY_NAME="portament-contact-viewer-address"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_DIR="$SCRIPT_DIR/.build"
 SECRET_FILE="$SCRIPT_DIR/.origin-secret"
+TURNSTILE_SECRET_FILE="$SCRIPT_DIR/.turnstile-secret"
 
 ASSUME_YES=0
 [[ "${1:-}" == "--yes" || "${1:-}" == "-y" ]] && ASSUME_YES=1
@@ -184,7 +185,10 @@ ROLE_ARN="$(aws iam get-role --role-name "$ROLE_NAME" --query 'Role.Arn' --outpu
 say "Build: packaging Lambda bundle"
 rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"
-cp "$SCRIPT_DIR/contact/index.mjs" "$SCRIPT_DIR/contact/validate.mjs" "$BUILD_DIR/"
+# Explicit list, not a glob: anything omitted here is silently absent from the
+# zip and the function dies at cold start with ERR_MODULE_NOT_FOUND.
+cp "$SCRIPT_DIR/contact/index.mjs" "$SCRIPT_DIR/contact/validate.mjs" \
+   "$SCRIPT_DIR/contact/turnstile.mjs" "$BUILD_DIR/"
 # The SDK is vendored rather than relying on the runtime's bundled copy, which
 # AWS documents as convenience-only and subject to change between runtime patches.
 # `npm init -y` would derive the package name from the directory (".build") and
@@ -213,9 +217,32 @@ else
   ok "new secret generated → $SECRET_FILE (gitignored, keep it)"
 fi
 
+# ─────────────────────── 4b. Cloudflare Turnstile secret ─────────────────────
+# Same three tiers as the origin secret, minus the generate step — Cloudflare
+# issues this value, we cannot invent it. In GitHub Actions tier 1 is the repo
+# secret; locally it is the gitignored file; tier 3 recovers it from the live
+# function so a missing GitHub secret degrades to "unchanged", not "wiped".
+say "Turnstile secret"
+if [[ -n "${TURNSTILE_SECRET:-}" ]]; then
+  ok "using TURNSTILE_SECRET from the environment"
+elif [[ -f "$TURNSTILE_SECRET_FILE" ]]; then
+  TURNSTILE_SECRET="$(cat "$TURNSTILE_SECRET_FILE")"
+  ok "reusing secret from $TURNSTILE_SECRET_FILE"
+elif ts_existing="$(aws_ lambda get-function-configuration --function-name "$FUNCTION_NAME" \
+      --query 'Environment.Variables.TURNSTILE_SECRET' --output text 2>/dev/null)" \
+     && [[ -n "$ts_existing" && "$ts_existing" != "None" ]]; then
+  TURNSTILE_SECRET="$ts_existing"
+  ok "recovered secret from the deployed function"
+else
+  TURNSTILE_SECRET=""
+  warn "no Turnstile secret found — the form will deploy with spam verification DISABLED"
+  warn "set the GitHub repo secret TURNSTILE_SECRET, or write $TURNSTILE_SECRET_FILE"
+fi
+
 ENV_JSON="$(jq -n --arg r "$RECIPIENT_EMAIL" --arg s "$SENDER_EMAIL" \
-  --arg sec "$ORIGIN_SECRET" --arg o "$ALLOWED_ORIGINS" '
-  { Variables: { RECIPIENT_EMAIL: $r, SENDER_EMAIL: $s, ORIGIN_SECRET: $sec, ALLOWED_ORIGINS: $o } }')"
+  --arg sec "$ORIGIN_SECRET" --arg o "$ALLOWED_ORIGINS" --arg ts "$TURNSTILE_SECRET" '
+  { Variables: { RECIPIENT_EMAIL: $r, SENDER_EMAIL: $s, ORIGIN_SECRET: $sec,
+                 ALLOWED_ORIGINS: $o, TURNSTILE_SECRET: $ts } }')"
 
 # ───────────────────────────── 5. Lambda function ────────────────────────────
 say "Lambda: $FUNCTION_NAME"

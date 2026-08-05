@@ -1,11 +1,15 @@
 import { SESv2Client, SendEmailCommand } from '@aws-sdk/client-sesv2';
 import { validate, buildEmail, resolveClientIp, isMissingPage, isOriginRejected } from './validate.mjs';
+import { isTokenShapeValid, verifyTurnstile } from './turnstile.mjs';
 
 const ses = new SESv2Client({});
 
 const RECIPIENT = process.env.RECIPIENT_EMAIL;
 const SENDER = process.env.SENDER_EMAIL;
 const ORIGIN_SECRET = process.env.ORIGIN_SECRET || '';
+// Unset => Turnstile verification is skipped entirely, same idiom as ORIGIN_SECRET.
+// This is what lets the backend deploy before the key exists without breaking the form.
+const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET || '';
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
   .split(',')
   .map((s) => s.trim())
@@ -93,6 +97,34 @@ export async function handler(event) {
   if (isMissingPage(body.page)) {
     console.warn(JSON.stringify({ event: 'missing_page', ip: clientIp }));
     return json(200, { ok: true }, corsOrigin);
+  }
+
+  // Turnstile proves a real browser session minted this submission. Placed after
+  // the page guard so the cheap spam is already gone and we only spend a
+  // Cloudflare round-trip on requests that look real. Fails closed: without a
+  // verdict we refuse, and the page tells the visitor to email sales@ directly.
+  if (TURNSTILE_SECRET) {
+    if (!isTokenShapeValid(body.token)) {
+      console.warn(JSON.stringify({ event: 'turnstile_missing', ip: clientIp, page: body.page }));
+      return json(400, { ok: false, error: 'turnstile' }, corsOrigin);
+    }
+    // remoteip is only sent when the address is genuinely CloudFront's own
+    // reading; feeding Cloudflare a spoofable X-Forwarded-For value would make
+    // its risk scoring worse, not better.
+    const verdict = await verifyTurnstile(body.token, {
+      secret: TURNSTILE_SECRET,
+      remoteIp: client.trusted ? client.ip : '',
+    });
+    if (!verdict.ok) {
+      console.warn(JSON.stringify({
+        event: verdict.reason === 'unreachable' ? 'turnstile_unreachable' : 'turnstile_failed',
+        ip: clientIp,
+        page: body.page,
+        errorCodes: verdict.errorCodes,
+        detail: verdict.detail,
+      }));
+      return json(403, { ok: false, error: 'turnstile' }, corsOrigin);
+    }
   }
 
   const result = validate(body);
