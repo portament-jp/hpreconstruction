@@ -33,6 +33,7 @@ HTML_FILES=(
   "agentpartner.html"
   "allrounder.html"
   "wavelopment.html"
+  "opsguide.html"
   "privacy-policy.html"
   "security-policy.html"
   "terms.html"

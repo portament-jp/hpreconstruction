@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpsGuide（オプスガイド） — 株式会社PORTAMENT</title>
+<meta name="description" content="OpsGuide（オプスガイド）は、株式会社PORTAMENTが開発・提供するAIエージェントです。業務アプリ、チャット等のWebサービスの連携や、Web画面の自動操作、チャットボットの構築等で繰り返し業務を自動化します。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* ============ OpsGuide 製品ページ（Claude Design「OpsGuide Only」準拠：ブランド色ヒーロー＋概要＋機能＋お問い合わせ） ============ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink: #18171a; --gray: #61687a; --line: rgba(16,18,22,.08); --paper: #ffffff;
+    --red: #f04f32; --amber: #e7bb29; --lime: #c6e44d; --teal: #19b7aa; --cyan: #0daecc; --blue: #1840cf;
+    --ease: cubic-bezier(.23, 1, .32, 1);
+    --font-body: 'IBM Plex Sans JP', sans-serif;
+    /* ブランド色（OpsGuide = アプリと同じブルー） */
+    --brand: #0b7ac0;
+    --brand-hero: linear-gradient(105deg, #074f80 0%, #0b7ac0 52%, #bfe0f3 100%);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Zen Kaku Gothic New', sans-serif; color: var(--ink);
+    background: #f4f5f7; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- ヘッダー（浮遊ピル・サイト共通） ---- */
+  header {
+    position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 50;
+    display: flex; align-items: center; gap: clamp(14px, 3vw, 34px);
+    padding: 10px 14px 10px 22px; border-radius: 999px;
+    background: rgba(247,248,249,.78); backdrop-filter: blur(16px) saturate(1.3); -webkit-backdrop-filter: blur(16px) saturate(1.3);
+    border: 1px solid rgba(20,22,26,.08); box-shadow: 0 10px 36px rgba(20,22,26,.10);
+    width: max-content; max-width: calc(100vw - 32px); transition: box-shadow .4s;
+  }
+  header.scrolled { box-shadow: 0 14px 44px rgba(20,22,26,.14); }
+  .brand img { height: 40px; display: block; }
+  nav { display: flex; align-items: center; gap: clamp(12px, 2vw, 26px); }
+  nav a {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+    letter-spacing: .03em; color: var(--ink); text-decoration: none; position: relative;
+  }
+  nav a:not(.cta)::after {
+    content: ''; position: absolute; left: 50%; bottom: -7px; width: 4px; height: 4px; border-radius: 50%;
+    transform: translateX(-50%) scale(0); transition: transform .3s var(--ease);
+  }
+  nav a:nth-child(1)::after { background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+  nav a:nth-child(2)::after { background: linear-gradient(90deg, var(--teal), var(--lime)); }
+  nav a:nth-child(3)::after { background: linear-gradient(90deg, var(--red), var(--amber)); }
+  nav a:not(.cta):hover::after { transform: translateX(-50%) scale(1); }
+  nav a.cta {
+    font-weight: 700; font-size: 13px; color: #fff; padding: 9px 20px; border-radius: 999px;
+    background: var(--ink); overflow: hidden; isolation: isolate; transition: transform .25s, box-shadow .25s;
+  }
+  nav a.cta:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(20,22,26,.3); }
+  nav a.cta span { position: relative; z-index: 1; }
+  nav a.cta::before {
+    content: ''; position: absolute; inset: 0; z-index: 0;
+    background: linear-gradient(120deg, var(--blue), var(--cyan));
+    transform: translateY(101%); transition: transform .45s var(--ease);
+  }
+  nav a.cta:hover::before { transform: translateY(0); }
+  @media (max-width: 720px) {
+    /* mobile: keep the full header menu visible, just smaller so it fits the pill */
+    header { gap: 7px; padding: 6px 8px 6px 11px; }
+    .brand img { height: 24px; }
+    nav { gap: 9px; }
+    nav a { font-size: 11px; letter-spacing: 0; }
+    nav a.cta { padding: 6px 11px; font-size: 11px; }
+  }
+
+  .wrap { position: relative; z-index: 2; }
+
+  /* ---- 共通セクション ---- */
+  section { padding: 96px clamp(20px, 5vw, 64px); position: relative; }
+  .inner { max-width: 1100px; margin: 0 auto; }
+  .rv { opacity: 0; transform: translateY(28px); transition: opacity .9s ease var(--d, 0s), transform .9s var(--ease) var(--d, 0s); }
+  .rv.on { opacity: 1; transform: none; }
+  .sec-h { font-size: clamp(24px, 3.6vw, 38px); font-weight: 900; letter-spacing: .02em; font-feature-settings: "palt"; }
+  .sec-lede { margin-top: 16px; color: var(--gray); font-size: 15px; font-family: var(--font-body); line-height: 2; }
+
+  /* ---- ブランド色ヒーロー ---- */
+  .svc-hero {
+    background: var(--brand-hero);
+    padding: 120px clamp(20px, 5vw, 64px) 80px;
+    position: relative; overflow: hidden;
+  }
+  .svc-hero .inner { display: grid; grid-template-columns: 1.25fr .75fr; align-items: center; gap: clamp(24px, 4vw, 56px); }
+  .hero-text { width: fit-content; }
+  .hero-label { font-family: var(--font-body); font-size: clamp(13px, 1.5vw, 16px); letter-spacing: .12em; color: #fff; opacity: .92; }
+  .hero-name { margin-top: 12.8px; font-family: 'Inter', sans-serif; font-weight: 400; font-size: clamp(40px, 6.4vw, 82px); line-height: 1.04; color: #fff; letter-spacing: .005em; }
+  .hero-sub { margin-top: 14.4px; font-family: var(--font-body); font-size: clamp(13px, 1.5vw, 16px); color: #fff; opacity: .92; letter-spacing: .06em; }
+  /* the rule runs 24px past the text on both sides */
+  .hero-rule { margin-top: 19.2px; width: calc(100% + 48px); margin-left: -24px; height: 1px; background: #fff; opacity: .55; }
+  .hero-icon { justify-self: center; }
+  /* アプリアイコンはブルーのため、白いタイルに載せてヒーロー背景から浮かせる */
+  .hero-icon .tile { display: inline-flex; padding: clamp(18px, 2.6vw, 30px); border-radius: clamp(28px, 4vw, 44px); background: #fff; box-shadow: 0 14px 40px rgba(7,40,72,.22); }
+  .hero-icon img { display: block; width: clamp(110px, 14vw, 170px); height: auto; }
+  @media (max-width: 760px) {
+    .svc-hero .inner { grid-template-columns: 1fr; text-align: center; gap: 26px; }
+    .hero-text { margin-left: auto; margin-right: auto; }
+    .hero-icon { order: -1; }
+  }
+
+  /* ---- 製品画面 ---- */
+  .screen {
+    display: block; margin: 56px auto 0; width: 68%; max-width: 100%; height: auto;
+    border-radius: 18px; border: 1px solid var(--line); box-shadow: 0 18px 44px rgba(16,24,48,.09); background: #fff;
+  }
+
+  /* ---- 機能（番号付きグリッド） ---- */
+  .points { margin-top: 56px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: clamp(18px, 2vw, 26px); }
+  .point { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 27.2px clamp(24px, 2.6vw, 32px); transition: box-shadow .35s var(--ease), transform .35s var(--ease); }
+  .point:hover { box-shadow: 0 18px 44px rgba(16,24,48,.09); transform: translateY(-3px); }
+  .point .pn { display: inline-flex; align-items: center; justify-content: center; min-width: 42px; height: 42px; padding: 0 6px; border-radius: 13px; background: var(--brand); color: #fff; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 17px; line-height: 1; }
+  .point .pt { margin-top: 18px; font-size: clamp(17px, 2vw, 21px); font-weight: 700; font-feature-settings: "palt"; line-height: 1.5; }
+  .point .pd { margin-top: 12px; font-family: var(--font-body); font-size: 13.5px; line-height: 1.95; color: var(--gray); }
+
+  /* ---- お問い合わせ ---- */
+  .cta-band { text-align: center; }
+  .cta-band .ch { font-size: clamp(22px, 3vw, 34px); font-weight: 900; font-feature-settings: "palt"; line-height: 1.5; }
+  .cta-band .cd { margin-top: 16px; font-family: var(--font-body); font-size: 14px; line-height: 2; color: var(--gray); }
+  .cta-btn {
+    margin-top: 32px; display: inline-block; text-decoration: none;
+    font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; color: #fff; letter-spacing: .04em;
+    background: var(--ink); padding: 16px 44px; border-radius: 999px;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(20,22,26,.28); color: #fff; }
+
+  /* ---- フッター ---- */
+  footer.site { position: relative; z-index: 2; border-top: 1px solid var(--line); padding: 56px clamp(20px, 5vw, 64px) 40px; background: #f4f5f7; }
+  .foot-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; align-items: flex-start; }
+  .foot-iso { font-family: var(--font-body); font-size: 12.5px; line-height: 2; color: var(--gray); max-width: 32em; }
+  .iso-logo { height: 56px; width: auto; display: block; margin-bottom: 14px; }
+  .foot-nav { display: flex; gap: clamp(16px, 2.4vw, 30px); flex-wrap: wrap; }
+  .foot-nav a { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: .03em; color: var(--ink); text-decoration: none; transition: color .3s; }
+  .foot-nav a:hover { color: var(--gray); }
+  .foot-copy { width: 100%; margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--line); font-family: 'Inter', sans-serif; font-size: 11.5px; letter-spacing: .06em; color: #9aa0ab; }
+
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <a class="brand" href="/"><img src="assets/logo-main.png" alt="PORTAMENT"></a>
+    <nav>
+      <a href="/#business">Business</a><a href="/#services">Service</a><a href="/#company">Company</a>
+      <a class="cta" href="/#contact"><span>Contact</span></a>
+    </nav>
+  </header>
+
+  <!-- ブランド色ヒーロー -->
+  <section class="svc-hero">
+    <div class="inner">
+      <div class="hero-text">
+        <p class="hero-label rv">自社製AIエージェントによるソリューション</p>
+        <h1 class="hero-name rv" style="--d:.08s;">OpsGuide</h1>
+        <p class="hero-sub rv" style="--d:.12s;">オプスガイド｜繰り返し業務を自動化するAIエージェント</p>
+        <div class="hero-rule rv" style="--d:.16s;"></div>
+      </div>
+      <div class="hero-icon rv" style="--d:.12s;"><span class="tile"><img src="assets/icon-opsguide.png" alt="OpsGuide"></span></div>
+    </div>
+  </section>
+
+  <!-- OpsGuideとは？ -->
+  <section>
+    <div class="inner">
+      <h2 class="sec-h rv">OpsGuideとは？</h2>
+      <p class="sec-lede rv">OpsGuide（オプスガイド）は、株式会社PORTAMENTが開発・提供するAIエージェントです。<br>業務アプリ、チャット等のwebサービスの連携や、web画面の自動操作、チャットボットの構築等が可能です。</p>
+      <img class="screen rv" style="--d:.06s;" src="assets/opsguide-screen.png" width="1602" height="844" loading="lazy" alt="OpsGuideの画面（フロー一覧とフロー編集画面）">
+    </div>
+  </section>
+
+  <!-- 主な機能 -->
+  <section style="padding-top:0;">
+    <div class="inner">
+      <h2 class="sec-h rv">主な機能</h2>
+      <div class="points">
+        <div class="point rv">
+          <span class="pn">01</span>
+          <p class="pt">業務フロー自動化</p>
+          <p class="pd">各種AI、各種業務アプリ、チャット等を自由に連携・自動実行し、繰り返し業務を自動化します。</p>
+        </div>
+        <div class="point rv" style="--d:.06s;">
+          <span class="pn">02</span>
+          <p class="pt">WebRPA</p>
+          <p class="pd">ログインや入力、クリック、ファイルのアップロードといったブラウザ上の操作を記録・再生し、Webサービスの操作を自動化します。</p>
+        </div>
+        <div class="point rv" style="--d:.12s;">
+          <span class="pn">03</span>
+          <p class="pt">AIチャットボット・ナレッジベース</p>
+          <p class="pd">社内のドキュメントやノウハウをナレッジとして蓄積し、チャットボットから必要な情報を素早く引き出せます。SaaSに付帯させる問い合わせボットとしても活用可能です。</p>
+        </div>
+        <div class="point rv" style="--d:.18s;">
+          <span class="pn">04</span>
+          <p class="pt">生成AI</p>
+          <p class="pd">フロー自動化、WebRPA含め、全ての機能でAIが連動して動いています。AIの進化とともに、OpsGuideで実現可能な処理も進化していきます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- お問い合わせ -->
+  <section class="cta-band" style="padding-top:0;">
+    <div class="inner">
+      <p class="ch rv">OpsGuideのご利用・ご相談</p>
+      <p class="cd rv">導入のご相談は、お問い合わせよりご連絡ください。</p>
+      <a class="cta-btn rv" href="/#contact">お問い合わせ</a>
+    </div>
+  </section>
+
+  <!-- フッター -->
+  <footer class="site">
+    <div class="foot-inner">
+      <div class="foot-iso"><img class="iso-logo" src="assets/logo-isms.png" alt="ISMS-AC / DQS ISO/IEC 27001 認証">当社は、ISO/IEC 27001（ISMS）認証をDQSより取得しています。</div>
+      <nav class="foot-nav">
+        <a href="/#business">Business</a>
+        <a href="/#services">Service</a>
+        <a href="/#company">Company</a>
+        <a href="/#contact">Contact</a>
+        <a href="/terms">利用規約</a>
+        <a href="/privacy-policy">プライバシーポリシー</a>
+        <a href="/security-policy">情報セキュリティ方針</a>
+      </nav>
+    </div>
+    <div class="foot-copy">© 2026 PORTAMENT, inc. All Rights Reserved.</div>
+  </footer>
+</div>
+
+<script>
+  const hd = document.querySelector('header');
+  addEventListener('scroll', () => hd.classList.toggle('scrolled', scrollY > 40), { passive: true });
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
+  }), { threshold: .14 });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
