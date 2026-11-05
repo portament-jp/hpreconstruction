@@ -57,16 +57,18 @@
   .legal-hero .eyebrow { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .14em; color: var(--cyan); text-transform: uppercase; }
   .legal-hero h1 { margin-top: 12px; font-size: clamp(28px,4.6vw,46px); font-weight: 900; letter-spacing: .02em; font-feature-settings: "palt"; }
   .legal-hero .upd { margin-top: 16px; font-family: var(--font-body); font-size: 13px; color: var(--gray); }
+  .legal-hero .lang { margin-top: 10px; font-family: var(--font-body); font-size: 13px; }
+  .legal-hero .lang a { color: var(--blue); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 1px; }
 
   .legal { padding: clamp(44px,6vh,72px) clamp(20px,5vw,64px) clamp(64px,9vh,110px); }
   .legal .inner { max-width: 880px; margin: 0 auto; }
   .legal .lead { font-family: var(--font-body); font-size: 15px; line-height: 2; color: var(--ink); }
   .legal .lead + .lead { margin-top: 18px; }
-  .legal h2 { margin-top: clamp(38px,5.5vh,56px); font-size: clamp(18px,2.4vw,25px); font-weight: 900; font-feature-settings: "palt"; padding-bottom: 12px; border-bottom: 2px solid var(--ink); }
+  .legal h2 { margin-top: clamp(38px,5.5vh,56px); font-size: clamp(18px,2.4vw,25px); font-weight: 900; font-feature-settings: "palt"; padding-bottom: 12px; border-bottom: 2px solid var(--ink); scroll-margin-top: 100px; }
   .legal h3 { margin-top: clamp(22px,3vh,30px); font-size: 15.5px; font-weight: 700; color: var(--ink); }
-  .legal p { margin-top: 14px; font-family: var(--font-body); font-size: 14px; line-height: 1.95; color: var(--gray); }
+  .legal p { margin-top: 14px; font-family: var(--font-body); font-size: 14px; line-height: 1.95; color: var(--gray); overflow-wrap: anywhere; }
   .legal ul { margin-top: 14px; list-style: none; display: grid; gap: 11px; }
-  .legal li { position: relative; padding-left: 19px; font-family: var(--font-body); font-size: 14px; line-height: 1.9; color: var(--gray); }
+  .legal li { position: relative; padding-left: 19px; font-family: var(--font-body); font-size: 14px; line-height: 1.9; color: var(--gray); overflow-wrap: anywhere; }
   .legal li::before { content: ''; position: absolute; left: 2px; top: .72em; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); }
   .legal li b { color: var(--ink); font-weight: 700; }
   .legal .terms { margin-top: 16px; display: grid; gap: 13px; }
@@ -101,7 +103,8 @@
     <div class="inner">
       <p class="eyebrow">Privacy Policy</p>
       <h1>プライバシーポリシー</h1>
-      <p class="upd">最終更新日：2024年7月1日</p>
+      <p class="upd">最終更新日：2026年11月2日</p>
+      <p class="lang"><a href="/privacy-policy-en" lang="en" hreflang="en">English</a></p>
     </div>
   </section>
 
@@ -142,6 +145,7 @@
       <p>当社は、Google、Facebook、Instagram、X、等の第三者のソーシャルメディアサービスを通じてアカウントを作成し、ログインしてサービスを利用することをお客様に許可しています。</p>
       <p>第三者のソーシャルメディアサービスを通じて登録するか、または当社にアクセスを許可することを決定した場合、当社はお客様の第三者のソーシャルメディアサービスのアカウントに既に関連付けられている個人データ（お客様の名前、メールアドレス、アクティビティ、またはそのアカウントに関連付けられている連絡先リストなど）を収集することがあります。</p>
       <p>お客様は、第三者のソーシャルメディアサービスのアカウントを通じて当社と追加の情報を共有するオプションを持つ場合があります。登録時またはその他の場合にそのような情報および個人データを提供することを選択した場合、お客様は当社がこのプライバシーポリシーに従ってその情報を使用、共有、および保存することを許可するものとします。</p>
+      <p>お客様が OpsGuide に Google アカウントを連携した場合に Google から取得するデータについては、<a class="inline" href="#google-user-data">「Google ユーザーデータの取り扱い」</a>をご覧ください。</p>
 
       <h3>お客様の個人データの使用</h3>
       <p>当社は、次の目的で個人データを使用する場合があります：</p>
@@ -155,6 +159,7 @@
         <li><b>ビジネス移転の場合：</b>合併、売却、再構築、再編、解散、またはサービスユーザーに関する当社が保有する個人データを含む当社の資産の一部または全部の売却または譲渡に関連するその他の取引の評価または実施のために、お客様の情報を使用する場合があります。</li>
         <li><b>その他の目的：</b>データ分析、利用動向の特定、プロモーションキャンペーンの効果の決定、および当社のサービス、製品、サービス、マーケティング、およびお客様の経験の評価および改善など、他の目的でお客様の情報を使用する場合があります。</li>
       </ul>
+      <p>なお、Google API を通じて取得したデータ（Google ユーザーデータ）は、上記の目的のうちお客様に提供する機能に必要な範囲でのみ利用し、ニュースの提供、マーケティング、プロモーション、その他の目的には利用しません。詳しくは<a class="inline" href="#google-user-data">「Google ユーザーデータの取り扱い」</a>をご覧ください。</p>
       <p>次の状況で、お客様の個人情報を共有する場合があります：</p>
       <ul>
         <li><b>サービスプロバイダーへの共有：</b>サービスの利用の監視および分析、お客様への連絡のために、お客様の個人情報をサービスプロバイダーと共有する場合があります。</li>
@@ -164,6 +169,7 @@
         <li><b>他のユーザーへの共有：</b>お客様が個人情報を共有するか、他のユーザーと公共エリアで相互作用する場合、その情報はすべてのユーザーによって閲覧され、外部で公開的に配布される可能性があります。第三者のソーシャルメディアサービスを通じて他のユーザーと相互作用するか、登録する場合、お客様の連絡先はお客様の名前、プロフィール、写真、および活動の説明を見ることができます。同様に、他のユーザーはお客様の活動の説明を閲覧し、お客様と通信し、お客様のプロフィールを表示することができます。</li>
         <li><b>お客様の同意のもとでの共有：</b>お客様の同意を得て、他の目的のためにお客様の個人情報を開示する場合があります。</li>
       </ul>
+      <p>Google ユーザーデータは、プロモーションのためのビジネスパートナーへの共有および他のユーザーへの公開の対象とせず、<a class="inline" href="#google-user-data">「Google ユーザーデータの取り扱い」</a>に定める場合を除き、第三者に共有または譲渡しません。</p>
 
       <h2>お客様の個人データの保持</h2>
       <p>当社は、本プライバシーポリシーに記載された目的のために必要な期間、お客様の個人データを保持します。当社は、法的義務を遵守するため（例えば、適用される法律に従ってデータを保持する必要がある場合）、紛争を解決し、法的協定およびポリシーを実施するために必要な範囲で、お客様の個人データを保持および使用します。</p>
@@ -208,6 +214,41 @@
       <p>上記の目的以外に、お客様の事前の明示的な同意なしに、お客様の個人データを AI/ML モデルの学習や汎用的なアルゴリズム開発に利用することはありません。</p>
       <h3>オプトアウト（拒否）の方法について</h3>
       <p>当社の AI/ML に関するデータ利用（匿名化されていない形での利用）が将来発生する場合には、ユーザーが明示的に同意または拒否を選択できる手続きを用意し、プライバシーポリシー上で通知いたします。</p>
+
+      <h2 id="google-user-data">Google ユーザーデータの取り扱い</h2>
+      <p>OpsGuide は、お客様が Google アカウントを連携し、OpsGuide のフロー（自動化処理）で Google のサービスを利用するよう設定した場合に限り、Google API を通じて Google ユーザーデータにアクセスします。Google ユーザーデータについては、本項の定めが本プライバシーポリシーの他の規定に優先します。</p>
+      <h3>アクセスするデータ</h3>
+      <p>お客様が許可した範囲で、次のデータにアクセスします。</p>
+      <ul>
+        <li><b>Google アカウントの基本情報：</b>メールアドレスおよび氏名（連携したアカウントを識別するため）</li>
+        <li><b>Gmail：</b>メールの読み取り、整理（ラベル付けなど）、送信および削除（Gmail のフルアクセス権限を使用します）</li>
+        <li><b>Google ドライブ、Google ドキュメント、Google スプレッドシート：</b>ファイルの読み取り、作成、更新および削除（フローで指定したファイルを対象とします）</li>
+        <li><b>Google カレンダー：</b>予定の読み取り、作成、更新および削除（Google カレンダーのフルアクセス権限を使用します）</li>
+        <li><b>Google Chat：</b>スペース、メンバーおよびメッセージの読み取り、作成、更新および削除（管理者権限による組織のスペースの管理、および既読状態の確認・更新を含みます）</li>
+        <li><b>Google フォーム：</b>フォームの内容および回答の読み取り、ならびにフォームの作成、更新および削除（フローで指定したフォームの内容・回答の取得と、新しい回答を検知するための通知の登録に使用します）</li>
+        <li><b>Google の連絡先および Google Workspace のディレクトリ：</b>宛先の検索・指定のための連絡先およびユーザー情報の読み取り</li>
+        <li><b>YouTube：</b>フローで指定した動画の、お客様の YouTube チャンネルへのアップロード（タイトルおよび説明を含みます）。既存の動画の閲覧、編集または削除は行いません</li>
+      </ul>
+      <h3>利用目的</h3>
+      <p>当社は、Google ユーザーデータを、お客様が OpsGuide で設定した機能（フローの実行、トリガーの検知、実行結果および実行履歴の表示など）をお客様に提供するため、ならびにそれらの機能の不具合の調査および改善のためにのみ利用します。広告（パーソナライズ広告、リターゲティング広告、興味・関心に基づく広告を含みます）、マーケティング、プロモーション、与信判断、その他お客様に提供する機能と関係のない目的には利用しません。</p>
+      <h3>共有および譲渡</h3>
+      <p>当社は、Google ユーザーデータを販売しません。次の場合を除き、Google ユーザーデータを第三者に共有または譲渡しません。</p>
+      <ul>
+        <li>お客様がフローで設定した処理を実行するため（お客様が指定した宛先へのメール送信や、お客様がフローに追加した外部サービスへのデータの受け渡しなど）</li>
+        <li>OpsGuide の運用に必要なサービスプロバイダー（クラウド基盤など）に、当社の指示のもと、本項と同等の保護を条件として処理を委託する場合</li>
+        <li>法令を遵守するため、または不正利用の調査・防止などセキュリティを確保するために必要な場合</li>
+        <li>合併、買収、事業譲渡などに伴う場合（事前にお客様に通知し、承継先にも本項と同等の取り扱いを求めます）</li>
+      </ul>
+      <h3>人による閲覧</h3>
+      <p>当社の役員および従業員は、Google ユーザーデータを閲覧しません。ただし、(a) お客様がサポートなどのために特定のデータの閲覧に明示的に同意した場合、(b) 不正利用の調査などセキュリティのために必要な場合、(c) 法令を遵守するために必要な場合、(d) 個人を特定できない形に集計・匿名化したデータを社内の運用のために利用する場合を除きます。</p>
+      <h3>AI/ML モデルの学習への不使用</h3>
+      <p>当社は、Google ユーザーデータ（Google Workspace API を通じて取得したデータを含みます）を、匿名化・集計化した形であっても、汎用的な AI/ML モデルの開発、改善または学習に利用しません。また、第三者にそのような利用を許可することもありません。お客様がフローに AI の処理を追加した場合、Google ユーザーデータはその処理を実行するためにのみ AI サービスに送信されます。</p>
+      <h3>保管および削除</h3>
+      <p>Google ユーザーデータは、フローの実行に必要な範囲で処理され、その実行結果は、お客様が確認できるよう実行履歴として保管されます。Google との連携に用いるアクセストークンは、アクセスが制限された環境で保管します。</p>
+      <p>お客様は、OpsGuide の「設定 → 連携サービス」から Google アカウントの連携を解除できるほか、<a class="inline" href="https://myaccount.google.com/connections" target="_blank" rel="noopener">Google アカウントの設定ページ</a>からいつでも OpsGuide のアクセスを取り消すことができます。保管されたデータの削除をご希望の場合は、下記のお問い合わせ先までご連絡ください。アカウントの削除または削除のご依頼があった場合、法令により保持が必要な場合を除き、速やかに削除します。</p>
+      <h3>限定使用（Limited Use）</h3>
+      <p>OpsGuide による Google API から受け取った情報の利用および他のアプリへの転送は、限定使用の要件を含む <a class="inline" href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API サービスのユーザーデータに関するポリシー</a>に準拠します。</p>
+
 
       <h2>子供のプライバシー</h2>
       <p>当社のサービスは13歳未満の方を対象としていません。当社は意図的に13歳未満の方から個人を特定できる情報を収集しません。お客様が保護者または後見人であり、お子様が当社に個人データを提供したことを知っている場合は、当社にご連絡ください。当社が13歳未満の方から親の同意を得ずに個人データを収集したことを知った場合、当社はその情報を当社のサーバーから削除する措置を講じます。</p>

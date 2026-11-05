@@ -35,6 +35,7 @@ HTML_FILES=(
   "wavelopment.html"
   "opsguide.html"
   "privacy-policy.html"
+  "privacy-policy-en.html"
   "security-policy.html"
   "terms.html"
 )

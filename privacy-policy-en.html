@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — PORTAMENT Inc.</title>
+<meta name="description" content="PORTAMENT Inc. Privacy Policy. Describes our policies and procedures on the collection, use and disclosure of your information.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink: #18171a; --gray: #61687a; --line: rgba(16,18,22,.08); --paper: #ffffff;
+    --red: #f04f32; --amber: #e7bb29; --lime: #c6e44d; --teal: #19b7aa; --cyan: #0daecc; --blue: #1840cf;
+    --ease: cubic-bezier(.23, 1, .32, 1);
+    --font-body: 'IBM Plex Sans JP', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Zen Kaku Gothic New', sans-serif; color: var(--ink); background: #f4f5f7; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+  /* ---- ヘッダー（浮遊ピル・サイト共通） ---- */
+  header {
+    position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 50;
+    display: flex; align-items: center; gap: clamp(14px, 3vw, 34px);
+    padding: 10px 14px 10px 22px; border-radius: 999px;
+    background: rgba(247,248,249,.78); backdrop-filter: blur(16px) saturate(1.3);
+    border: 1px solid rgba(20,22,26,.08); box-shadow: 0 10px 36px rgba(20,22,26,.10);
+    width: max-content; max-width: calc(100vw - 32px); transition: box-shadow .4s;
+  }
+  header.scrolled { box-shadow: 0 14px 44px rgba(20,22,26,.14); }
+  .brand img { height: 40px; display: block; }
+  nav { display: flex; align-items: center; gap: clamp(12px, 2vw, 26px); }
+  nav a { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: .03em; color: var(--ink); text-decoration: none; position: relative; }
+  nav a:not(.cta)::after { content: ''; position: absolute; left: 50%; bottom: -7px; width: 4px; height: 4px; border-radius: 50%; transform: translateX(-50%) scale(0); transition: transform .3s var(--ease); }
+  nav a:nth-child(1)::after { background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+  nav a:nth-child(2)::after { background: linear-gradient(90deg, var(--teal), var(--lime)); }
+  nav a:nth-child(3)::after { background: linear-gradient(90deg, var(--red), var(--amber)); }
+  nav a:not(.cta):hover::after { transform: translateX(-50%) scale(1); }
+  nav a.cta { font-weight: 700; font-size: 13px; color: #fff; padding: 9px 20px; border-radius: 999px; background: var(--ink); overflow: hidden; isolation: isolate; transition: transform .25s, box-shadow .25s; }
+  nav a.cta:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(20,22,26,.3); }
+  nav a.cta span { position: relative; z-index: 1; }
+  nav a.cta::before { content: ''; position: absolute; inset: 0; z-index: 0; background: linear-gradient(120deg, var(--blue), var(--cyan)); transform: translateY(101%); transition: transform .45s var(--ease); }
+  nav a.cta:hover::before { transform: translateY(0); }
+  @media (max-width: 720px) {
+    /* mobile: keep the full header menu visible, just smaller so it fits the pill */
+    header { gap: 7px; padding: 6px 8px 6px 11px; }
+    .brand img { height: 24px; }
+    nav { gap: 9px; }
+    nav a { font-size: 11px; letter-spacing: 0; }
+    nav a.cta { padding: 6px 11px; font-size: 11px; }
+  }
+
+  /* ---- 法務ページ ---- */
+  .legal-hero { padding: clamp(120px,16vh,180px) clamp(20px,5vw,64px) clamp(36px,5vh,56px); border-bottom: 1px solid var(--line); background: #fff; }
+  .legal-hero .inner { max-width: 880px; margin: 0 auto; }
+  .legal-hero .eyebrow { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .14em; color: var(--cyan); text-transform: uppercase; }
+  .legal-hero h1 { margin-top: 12px; font-size: clamp(28px,4.6vw,46px); font-weight: 900; letter-spacing: .02em; font-feature-settings: "palt"; }
+  .legal-hero .upd { margin-top: 16px; font-family: var(--font-body); font-size: 13px; color: var(--gray); }
+  .legal-hero .lang { margin-top: 10px; font-family: var(--font-body); font-size: 13px; }
+  .legal-hero .lang a { color: var(--blue); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+
+  .legal { padding: clamp(44px,6vh,72px) clamp(20px,5vw,64px) clamp(64px,9vh,110px); }
+  .legal .inner { max-width: 880px; margin: 0 auto; }
+  .legal .lead { font-family: var(--font-body); font-size: 15px; line-height: 2; color: var(--ink); }
+  .legal .lead + .lead { margin-top: 18px; }
+  .legal h2 { margin-top: clamp(38px,5.5vh,56px); font-size: clamp(18px,2.4vw,25px); font-weight: 900; font-feature-settings: "palt"; padding-bottom: 12px; border-bottom: 2px solid var(--ink); scroll-margin-top: 100px; }
+  .legal h3 { margin-top: clamp(22px,3vh,30px); font-size: 15.5px; font-weight: 700; color: var(--ink); }
+  .legal p { margin-top: 14px; font-family: var(--font-body); font-size: 14px; line-height: 1.95; color: var(--gray); overflow-wrap: anywhere; }
+  .legal ul { margin-top: 14px; list-style: none; display: grid; gap: 11px; }
+  .legal li { position: relative; padding-left: 19px; font-family: var(--font-body); font-size: 14px; line-height: 1.9; color: var(--gray); overflow-wrap: anywhere; }
+  .legal li::before { content: ''; position: absolute; left: 2px; top: .72em; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); }
+  .legal li b { color: var(--ink); font-weight: 700; }
+  .legal .terms { margin-top: 16px; display: grid; gap: 13px; }
+  .legal .terms .t { font-family: var(--font-body); font-size: 14px; line-height: 1.9; color: var(--gray); }
+  .legal .terms .t b { color: var(--ink); font-weight: 700; }
+  .legal a.inline { color: var(--blue); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+  .legal .note { margin-top: clamp(40px,6vh,60px); padding: clamp(18px,2.6vh,24px) clamp(18px,2.4vw,26px); background: #eef2f8; border-radius: 14px; font-family: var(--font-body); font-size: 13px; line-height: 1.9; color: var(--gray); }
+
+  /* ---- フッター（サイト共通） ---- */
+  footer.site { position: relative; z-index: 2; border-top: 1px solid var(--line); padding: clamp(48px,7vh,80px) clamp(20px,5vw,64px) clamp(36px,5vh,56px); background:#f4f5f7; }
+  .foot-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; align-items: flex-start; }
+  .foot-iso { font-family: var(--font-body); font-size: 12.5px; line-height: 2; color: var(--gray); max-width: 32em; }
+  .iso-logo { height: 56px; width: auto; display: block; margin-bottom: 14px; }
+  .foot-nav { display: flex; gap: clamp(16px,2.4vw,30px); flex-wrap: wrap; }
+  .foot-nav a { font-family:'Inter',sans-serif; font-size: 13px; font-weight: 500; letter-spacing:.03em; color: var(--ink); text-decoration: none; transition: color .3s; white-space: nowrap; }
+  .foot-nav a:hover { color: var(--gray); }
+  .foot-copy { width: 100%; margin-top: clamp(28px,4vh,40px); padding-top: 20px; border-top: 1px solid var(--line); font-family:'Inter',sans-serif; font-size: 11.5px; letter-spacing:.06em; color: #9aa0ab; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <a class="brand" href="/"><img src="assets/logo-main.png" alt="PORTAMENT"></a>
+    <nav>
+      <a href="/#business">Business</a><a href="/#services">Service</a><a href="/#company">Company</a>
+      <a class="cta" href="/#contact"><span>Contact</span></a>
+    </nav>
+  </header>
+
+  <section class="legal-hero">
+    <div class="inner">
+      <p class="eyebrow">English</p>
+      <h1>Privacy Policy</h1>
+      <p class="upd">Last updated: November 2, 2026</p>
+      <p class="lang"><a href="/privacy-policy" lang="ja" hreflang="ja">日本語</a></p>
+    </div>
+  </section>
+
+  <section class="legal">
+    <div class="inner">
+      <p class="lead">This Privacy Policy describes our policies and procedures on how we collect, use and disclose your information when you use the Service, and tells you about your privacy rights and how the law protects you.</p>
+      <p class="lead">We use your Personal Data to provide and improve the Service. By using the Service, you agree to the collection and use of information in accordance with this Privacy Policy.</p>
+
+      <h2>Definitions</h2>
+      <p>For the purposes of this Privacy Policy:</p>
+      <div class="terms">
+        <p class="t"><b>"Account"</b> means a unique account created for you to access our Service or parts of our Service.</p>
+        <p class="t"><b>"Affiliate"</b> means an entity that controls, is controlled by or is under common control with us or you, where "control" means ownership of 50% or more of the shares, equity interest or other securities entitled to vote for election of directors or other managing authority.</p>
+        <p class="t"><b>"Company"</b> (referred to as "we", "us" or "our") refers to PORTAMENT Inc. (Prefas Ebisu-minami 4F, 1-20-6 Ebisu-minami, Shibuya-ku, Tokyo, Japan).</p>
+        <p class="t"><b>"Country"</b> refers to Japan.</p>
+        <p class="t"><b>"Device"</b> means any device that can access the Service, such as a computer, a mobile phone or a digital tablet.</p>
+        <p class="t"><b>"Personal Data"</b> means any information that relates to an identified or identifiable individual.</p>
+        <p class="t"><b>"Service"</b> refers to all services provided by the Company, including the software program OpsGuide.</p>
+        <p class="t"><b>"Service Provider"</b> means any natural or legal person who processes data on behalf of the Company. It refers to third-party companies or individuals employed by the Company to facilitate the Service, to provide the Service on behalf of the Company, to perform services related to the Service or to assist the Company in analyzing how the Service is used.</p>
+        <p class="t"><b>"Third-party Social Media Service"</b> refers to any website or social network website through which a user can log in or create an account to use the Service.</p>
+        <p class="t"><b>"Usage Data"</b> refers to data collected automatically, either generated by the use of the Service or from the Service infrastructure itself (for example, the duration of a page visit).</p>
+        <p class="t"><b>"You"</b> means the individual accessing or using the Service, or the company or other legal entity on behalf of which such individual is accessing or using the Service.</p>
+      </div>
+
+      <h2>Collecting and Using Your Personal Data</h2>
+      <h3>Types of Data Collected</h3>
+      <h3>Personal Data</h3>
+      <p>While using our Service, we may ask you to provide us with contact information or certain identifiable information ("your information"). Personally identifiable information may include, but is not limited to:</p>
+      <ul>
+        <li>Email address</li>
+      </ul>
+      <h3>Usage Data</h3>
+      <p>Usage Data is collected automatically when using the Service.</p>
+      <p>Usage Data may include information such as your Device's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that you visit, the time and date of your visit, the time spent on those pages, unique device identifiers and other diagnostic data.</p>
+      <p>When you access the Service by or through a mobile device, we may collect certain information automatically, including the type of mobile device you use, your mobile device's unique ID, the IP address of your mobile device, your mobile operating system, the type of mobile internet browser you use, unique device identifiers and other diagnostic data.</p>
+      <p>We may also collect information that your browser sends whenever you visit our Service or when you access the Service by or through a mobile device.</p>
+      <h3>Information from Third-party Social Media Services</h3>
+      <p>We allow you to create an account and log in to use the Service through Third-party Social Media Services such as Google, Facebook, Instagram and X.</p>
+      <p>If you decide to register through or otherwise grant us access to a Third-party Social Media Service, we may collect Personal Data that is already associated with your Third-party Social Media Service account, such as your name, your email address, your activities or your contact list associated with that account.</p>
+      <p>You may also have the option of sharing additional information with us through your Third-party Social Media Service account. If you choose to provide such information and Personal Data, during registration or otherwise, you are giving us permission to use, share and store it in a manner consistent with this Privacy Policy.</p>
+      <p>For data obtained from Google when you connect your Google account to OpsGuide, please see <a class="inline" href="#google-user-data">"Handling of Google User Data"</a>.</p>
+      <h3>Use of Your Personal Data</h3>
+      <p>We may use Personal Data for the following purposes:</p>
+      <ul>
+        <li><b>To provide and maintain the Service:</b> including to monitor the usage of the Service.</li>
+        <li><b>To manage your Account:</b> to manage your registration as a user of the Service. The Personal Data you provide gives you access to the different functionalities of the Service that are available to you as a registered user.</li>
+        <li><b>For the performance of a contract:</b> the development, compliance and undertaking of the purchase contract for the products, items or services you have purchased through the Service, or of any other contract with us.</li>
+        <li><b>To contact you:</b> to contact you by email, telephone, SMS or other equivalent forms of electronic communication, such as a mobile application's push notifications, regarding updates or informative communications related to the functionalities, products or contracted services, including security updates.</li>
+        <li><b>To provide you with news:</b> to provide you with news, special offers and general information about other goods, services and events similar to those you have already purchased or enquired about, unless you have opted not to receive such information.</li>
+        <li><b>To manage your requests:</b> to attend to and manage your requests to us.</li>
+        <li><b>For business transfers:</b> we may use your information to evaluate or conduct a merger, sale, restructuring, reorganization, dissolution or other sale or transfer of some or all of our assets, including Personal Data we hold about users of the Service.</li>
+        <li><b>For other purposes:</b> we may use your information for other purposes, such as data analysis, identifying usage trends, determining the effectiveness of our promotional campaigns, and evaluating and improving our Service, products, services, marketing and your experience.</li>
+      </ul>
+      <p>Data obtained through Google APIs (Google user data) is used only to the extent necessary for the features provided to you among the purposes above, and is not used to provide news, or for marketing, promotion or any other purpose. For details, please see <a class="inline" href="#google-user-data">"Handling of Google User Data"</a>.</p>
+      <p>We may share your personal information in the following situations:</p>
+      <ul>
+        <li><b>With Service Providers:</b> we may share your personal information with Service Providers to monitor and analyze the use of the Service and to contact you.</li>
+        <li><b>For business transfers:</b> we may share or transfer your personal information in connection with, or during negotiations of, any sale of company assets, financing, or transfer or acquisition of all or a portion of our business to another company.</li>
+        <li><b>With Affiliates:</b> we may share your information with our Affiliates, in which case we will require those Affiliates to honor this Privacy Policy. Affiliates include our parent company and any other subsidiaries, joint venture partners or other companies that we control or that are under common control with us.</li>
+        <li><b>With business partners:</b> we may share your information with our business partners to offer you certain products, services or promotions. In addition, where we outsource the handling of personal information to a third party, or enter into a business alliance with a third party for the handling of personal information, in order to provide the Service smoothly, we may disclose and share your information with those contractors or partners to the extent necessary.</li>
+        <li><b>With other users:</b> when you share personal information or otherwise interact in public areas with other users, such information may be viewed by all users and may be publicly distributed outside. If you interact with other users or register through a Third-party Social Media Service, your contacts on that service may see your name, profile, pictures and description of your activity. Similarly, other users will be able to view descriptions of your activity, communicate with you and view your profile.</li>
+        <li><b>With your consent:</b> we may disclose your personal information for any other purpose with your consent.</li>
+      </ul>
+      <p>Google user data is not shared with business partners for promotion and is not made public to other users, and is not shared with or transferred to third parties except as set out in <a class="inline" href="#google-user-data">"Handling of Google User Data"</a>.</p>
+
+      <h2>Retention of Your Personal Data</h2>
+      <p>We will retain your Personal Data only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use your Personal Data to the extent necessary to comply with our legal obligations (for example, if we are required to retain your data to comply with applicable laws), resolve disputes, and enforce our legal agreements and policies.</p>
+      <p>We will also retain Usage Data for internal analysis purposes. Usage Data is generally retained for a shorter period of time, except when this data is used to strengthen security or to improve the functionality of our Service, or we are legally obligated to retain this data for longer periods.</p>
+
+      <h2>Transfer of Your Personal Data</h2>
+      <p>Your information, including Personal Data, is processed at our operating offices and in any other places where the parties involved in the processing are located. This means that this information may be transferred to, and maintained on, computers located outside of your prefecture, country or other governmental jurisdiction, where the data protection laws may differ from those of your jurisdiction.</p>
+      <p>Your consent to this Privacy Policy, followed by your submission of such information, represents your agreement to that transfer.</p>
+      <p>We will take all steps reasonably necessary to ensure that your data is treated securely and in accordance with this Privacy Policy, and no transfer of your Personal Data will take place to an organization or a country unless there are adequate controls in place, including the security of your data and other personal information.</p>
+
+      <h2>Deletion of Your Personal Data</h2>
+      <p>You have the right to delete, or request that we assist in deleting, the Personal Data that we have collected about you.</p>
+      <p>Our Service may give you the ability to delete certain information about you from within the Service.</p>
+      <p>If you have an account, you may update, amend or delete your information at any time by signing in to your account and visiting the account settings section that allows you to manage your personal information. You may also contact us to request access to, correction of or deletion of any personal information that you have provided to us.</p>
+      <p>Please note, however, that we may need to retain certain information when we have a legal obligation or lawful basis to do so.</p>
+
+      <h2>Disclosure of Your Personal Data</h2>
+      <h3>Business Transactions</h3>
+      <p>If we are involved in a merger, acquisition or asset sale, your Personal Data may be transferred. We will provide notice before your Personal Data is transferred and becomes subject to a different Privacy Policy.</p>
+      <h3>Law Enforcement</h3>
+      <p>Under certain circumstances, we may be required to disclose your Personal Data if required to do so by law or in response to valid requests by public authorities (e.g. a court or a government agency).</p>
+      <h3>Other Legal Requirements</h3>
+      <p>We may disclose your Personal Data in the good faith belief that such action is necessary to:</p>
+      <ul>
+        <li>Comply with a legal obligation</li>
+        <li>Protect and defend our rights or property</li>
+        <li>Prevent or investigate possible wrongdoing in connection with the Service</li>
+        <li>Protect the personal safety of users of the Service or the public</li>
+        <li>Protect against legal liability</li>
+      </ul>
+
+      <h2>Security of Your Personal Data</h2>
+      <p>The security of your Personal Data is important to us, but remember that no method of transmission over the Internet or method of electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your Personal Data, we cannot guarantee its absolute security.</p>
+
+      <h2>Use of Data for AI/ML Model Development and Training</h2>
+      <p>We do not use user data obtained through OpsGuide and connected external services to train general-purpose AI or machine learning models ("AI/ML models").</p>
+      <p>However, we may use data as follows, to the extent necessary to provide and improve the features of our Service.</p>
+      <ul>
+        <li><b>Providing and analyzing Service features:</b> we may record the features used by individual users and error information, and use them to improve the quality of the Service.</li>
+        <li><b>Use of anonymized or aggregated data:</b> we may analyze the usage of the Service in a form that does not identify individual users (anonymized or aggregated). This data may be used to improve models or develop new features, but is not used to identify specific individuals.</li>
+      </ul>
+      <p>Other than for the purposes above, we will not use your Personal Data to train AI/ML models or to develop general-purpose algorithms without your prior explicit consent.</p>
+      <h3>How to Opt Out</h3>
+      <p>If we use data for AI/ML in the future (in a form that is not anonymized), we will provide a procedure that allows users to explicitly consent or decline, and will announce it in this Privacy Policy.</p>
+
+      <h2 id="google-user-data">Handling of Google User Data</h2>
+      <p>OpsGuide accesses Google user data through Google APIs only when you connect your Google account and set up OpsGuide flows (automated processes) to use Google services. For Google user data, the provisions of this section take precedence over the other provisions of this Privacy Policy.</p>
+      <h3>Data We Access</h3>
+      <p>With your permission, we access the following data.</p>
+      <ul>
+        <li><b>Basic Google account information:</b> email addresses and name (to identify the connected account)</li>
+        <li><b>Gmail:</b> reading, organizing (such as labeling), sending and deleting email (using full Gmail access)</li>
+        <li><b>Google Drive, Google Docs, Google Sheets:</b> reading, creating, updating and deleting files (for the files specified in your flows)</li>
+        <li><b>Google Calendar:</b> reading, creating, updating and deleting events (using full Google Calendar access)</li>
+        <li><b>Google Chat:</b> reading, creating, updating and deleting spaces, members and messages (including managing your organization's spaces with administrator privileges, and viewing and updating read status)</li>
+        <li><b>Google Forms:</b> reading form content and responses, and creating, updating and deleting forms (used to retrieve the content and responses of the forms specified in your flows, and to register notifications that detect new responses)</li>
+        <li><b>Google Contacts and Google Workspace directory:</b> reading contacts and user information to search for and specify recipients</li>
+        <li><b>YouTube:</b> uploading the video specified in your flow to your YouTube channel, with its title and description. We do not view, edit or delete your existing videos</li>
+      </ul>
+      <h3>Purpose of Use</h3>
+      <p>We use Google user data only to provide you with the features you configure in OpsGuide (such as running flows, detecting triggers, and displaying execution results and execution history), and to investigate and fix problems with those features. We do not use it for advertising (including personalized, retargeting and interest-based advertising), marketing, promotion, credit decisions or any other purpose unrelated to the features provided to you.</p>
+      <h3>Sharing and Transfer</h3>
+      <p>We do not sell Google user data. We do not share or transfer Google user data to third parties except in the following cases.</p>
+      <ul>
+        <li>To carry out the processing you configure in your flows (such as sending email to recipients you specify, or passing data to external services you add to your flows)</li>
+        <li>When we entrust processing to service providers necessary to operate OpsGuide (such as cloud infrastructure), under our instructions and subject to protections equivalent to this section</li>
+        <li>When necessary to comply with laws, or to ensure security, such as investigating and preventing abuse</li>
+        <li>In connection with a merger, acquisition or business transfer (we will notify you in advance and require the successor to handle the data in a manner equivalent to this section)</li>
+      </ul>
+      <h3>Human Access</h3>
+      <p>Our officers and employees do not read Google user data, except (a) where you have explicitly consented to our viewing specific data, for example for support, (b) where necessary for security purposes, such as investigating abuse, (c) where necessary to comply with laws, or (d) where data aggregated and anonymized so that individuals cannot be identified is used for internal operations.</p>
+      <h3>No Use for AI/ML Model Training</h3>
+      <p>We do not use Google user data (including data obtained through Google Workspace APIs) to develop, improve or train general-purpose AI/ML models, even in anonymized or aggregated form, and we do not allow third parties to do so. If you add AI processing to a flow, Google user data is sent to the AI service only to carry out that processing.</p>
+      <h3>Storage and Deletion</h3>
+      <p>Google user data is processed to the extent necessary to run your flows, and the results are stored as execution history so that you can review them. Access tokens used to connect with Google are stored in an access-restricted environment.</p>
+      <p>You can disconnect your Google account from "Settings → Connected services" in OpsGuide, and you can revoke OpsGuide's access at any time from your <a class="inline" href="https://myaccount.google.com/connections" target="_blank" rel="noopener">Google Account settings page</a>. If you would like stored data to be deleted, please contact us using the details below. When you delete your account or request deletion, we will delete the data promptly, except where retention is required by law.</p>
+      <h3>Limited Use</h3>
+      <p>OpsGuide's use and transfer to any other app of information received from Google APIs will adhere to the <a class="inline" href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+
+      <h2>Children's Privacy</h2>
+      <p>Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from anyone under the age of 13. If you are a parent or guardian and you are aware that your child has provided us with Personal Data, please contact us. If we become aware that we have collected Personal Data from anyone under the age of 13 without verification of parental consent, we take steps to remove that information from our servers.</p>
+      <p>If we need to rely on consent as a legal basis for processing your information and your country requires consent from a parent, we may require your parent's consent before we collect and use that information.</p>
+
+      <h2>Links to Other Websites</h2>
+      <p>Our Service may contain links to other websites that are not operated by us. If you click on a third-party link, you will be directed to that third party's site. We strongly advise you to review the Privacy Policy of every site you visit.</p>
+      <p>We have no control over and assume no responsibility for the content, privacy policies or practices of any third-party sites or services.</p>
+
+      <h2>Our Information Management</h2>
+      <p>We recognize that protecting your information is an important social mission. We declare that all of our officers and employees will establish and properly operate a personal information protection management system in order to comply with the laws and regulations on personal information protection with respect to personal information handled in all of our businesses and the personal information of our employees, and that the entire company will work to continuously improve that management system while paying attention to changing social demands.</p>
+      <ul>
+        <li>Recognizing the importance of protecting personal information, we clearly define the purposes of use within the scope necessary to carry out our business activities, and acquire, use and provide personal information appropriately. We use acquired personal information only within the scope of the purposes of use, and take measures to prevent its use for any other purpose.</li>
+        <li>When we outsource all or part of the handling of personal information acquired through the measures above, or personal information acquired from our employees, or when we provide personal information to a third party, we select businesses that meet a sufficient level of personal information protection and take appropriate measures through contracts and other means.</li>
+        <li>So that you can provide your personal information with peace of mind, we take reasonable security, preventive and corrective measures against risks such as leakage, loss or damage of personal information.</li>
+        <li>As a company entrusted with important personal information, we comply with laws and regulations on the handling of personal information, and with other norms including the guidelines issued by the relevant government agencies under the Act on the Protection of Personal Information.</li>
+        <li>We continuously review and improve our personal information protection management system in order to use personal information appropriately and ensure its protection.</li>
+        <li>If we receive complaints or enquiries regarding our handling of personal information, we will respond promptly and appropriately through the contact details below.</li>
+      </ul>
+      <p>We require all of our officers and employees to comply with this Privacy Policy, and provide necessary and appropriate training and supervision from time to time for this purpose.</p>
+
+      <h2>Changes to this Privacy Policy</h2>
+      <p>We may update this Privacy Policy from time to time. If we make changes, we will post the new Privacy Policy on this page, notify you by email and/or a prominent notice on our Service before the change becomes effective, and update the "Last updated" date of this Privacy Policy.</p>
+      <p>You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p>
+
+      <h2>Contact Us</h2>
+      <p>If you have any questions about this Privacy Policy, you can contact us:</p>
+      <ul>
+        <li>By email: <a class="inline" href="mailto:sales@portament.jp">sales@portament.jp</a></li>
+        <li>Contact form: <a class="inline" href="/#contact">here</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="site">
+    <div class="foot-inner">
+      <div class="foot-iso"><img class="iso-logo" src="assets/logo-isms.png" alt="ISMS-AC / DQS ISO/IEC 27001 認証">当社は、ISO/IEC 27001（ISMS）認証をDQSより取得しています。</div>
+      <nav class="foot-nav">
+        <a href="/#business">Business</a>
+        <a href="/#services">Service</a>
+        <a href="/#company">Company</a>
+        <a href="/#contact">Contact</a>
+        <a href="/terms">利用規約</a>
+        <a href="/privacy-policy">プライバシーポリシー</a>
+        <a href="/security-policy">情報セキュリティ方針</a>
+      </nav>
+    </div>
+    <div class="foot-copy">© 2026 PORTAMENT, inc. All Rights Reserved.</div>
+  </footer>
+</div>
+
+<script>
+  const hd = document.querySelector('header');
+  addEventListener('scroll', () => hd.classList.toggle('scrolled', scrollY > 40), { passive: true });
+</script>
+</body>
+</html>
